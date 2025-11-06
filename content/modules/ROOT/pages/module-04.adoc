@@ -14,8 +14,8 @@ Install with defaults
 
 
 [start=2]
-Operators > OperatorHub
-. Search Self Node Remediation operator and pick the Red Hat operator
+. Operators > OperatorHub
+Search Self Node Remediation operator and pick the Red Hat operator
 Install with defaults
 
 [start=3]
