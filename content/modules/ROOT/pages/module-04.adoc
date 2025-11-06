@@ -1,0 +1,67 @@
+= Fencing and How to Handle Node Failure 
+
+
+
+This lab demonstrates the capabilities of the Node Health Check Operator and the Self Node Remediation Operator. You will simulate a node failure to observe the virtual machine migration process and subsequent node recovery.
+
+[#fencing]
+
+[start=1]
+Install the Node Health Check operator with defaults 
+Operators > OperatorHub
+Search Node Health Check and pick the Red Hat operator
+Install with defaults
+
+
+[start=2]
+Operators > OperatorHub
+Search Self Node Remediation operator and pick the Red Hat operator
+Install with defaults
+
+[start=3]
+Create a node health check 
+Installed Operators click Node Health Check Operator
+Click Node health check > create NodeHealthCheck
+
+[start=4]
+Name it workerhealthcheck
+Set Selector Labels to worker
+Change duration to 60s for both Unhealthy Conditions
+Click create
+
+[start=5]
+Find out what node your vm is running on 
+$ oc get vmi
+
+[start=6]
+Open two terminal additional terminal sessions for monitoring
+
+[start=7]
+On the first new terminal you opened. We are going to use this to monitor the node found in step 5.
+
+$ oc get nodes < worker from step 5> -w
+
+[start=8]
+On the second new terminal you opened. We are going to use this to monitor you vm
+oc get -n labvm vmi -w
+
+[start=9]
+On the original terminal you created we are going to force the worker from step 5 to go into an unhealthy state.
+
+$ oc debug node/< worker from step 5>
+$ chroot /host
+$ systemctl stop kubelet
+
+[start=10]
+Go to operator > Installed operators  > Self Node Remediation Operator > Self Node Remediation
+Here you can see that self remediation is occurring on the node
+
+[start=11]
+Initially, your worker will transition to a 'not ready' state, causing the VM to fail. Subsequently, the worker will enter a 'NotReady, SchedulingDisabled' state, and the VM will become pending.
+
+The VM will then proceed through scheduling and be scheduled onto a new node, where it will begin running. Concurrently, the original node will undergo remediation by the Self Node Remediation operator and be restored to a healthy state.
+
+
+
+
+This lab demonstrates the capabilities of the Node Health Check Operator and the Self Node Remediation Operator. You will simulate a node failure to observe the virtual machine migration process and subsequent node recovery.
