@@ -1,44 +1,53 @@
 = {lab_name}
 
-The `lab_name` var, known as an asciidoc attribute, above was set in `./content/antora.yml` and can be used to set the lab_name or title of your content.
-You are both free to change its value and if you prefer to use a different var name, you can change the value of `lab_name`, for example to `title` in `./content/antora.yml` and then reference it in your content as `\{title}`. +
+In this lab, we will guide you through the process of applying the Rosetta Stone to OpenShift Virtualization.
+
+
+OpenShift Virtualization is everywhere and has a major influence across our accounts.
+
+The interest level is high, but there is always the unavoidable question: How does it compare to other hypervisors?
+
+
+Moving beyond installation, configuration, and VM creation, the Rosetta Stone builds a mapping between traditional virtualization platforms and OpenShift Virtualization capabilities.
+
+
+Let's take that mapping and put it into practice to supercharge your knowledge and tackle those customer questions with confidence.
+
+
+In this lab, we will introduce and walk you through how to explain and demonstrate key administrative and VM owner capabilities around infrastructure optimization, workload availability, scalability, and resource management.
+
+
+You will walk away with the understanding, knowledge, and experience to showcase:
+
+* *Live Migration of Workloads :* Move VMs seamlessly between hosts with zero downtime
+* *CPU and Memory Overcommit :* Optimize resource utilization across your cluster
+* *Hot Plugging of CPU, Memory, and Disk Resources :* Scale VM resources without restarts
+* *Fencing and How to Handle Node Failure :* Ensure workload resilience during infrastructure disruptions
+* *Dynamic Rescheduling of Workloads :* Let the platform automatically optimize VM placement
+* *Affinity and Anti-Affinity for VM Placement :* Control where VMs run for performance and availability
+* *VM Isolation and Security :* Control where VMs run for performance and availability
+
 
 
 image::virt-icon-large.png[virt-icon-large,55%,55%,align="left"]
 
-== Variables
 
-Other vars can also be set there, such as `ssh_user` and `ssh_password`, and referenced inline in the lab content by using the `\{foo}` syntax.
-
-This is another var, or asciidoc attribute, from `./content/antora.yml` {my_var}
-
-== Writing your lab
-
-Whatever type of content you are writing we'll refer to your *content* as "your lab" in this document.
-
-=== Lab structure
-
-Wether you are writing a lab
-
-* First, we will build a monolithic application already compiled as RPM packages and put it into a container. This will allow us to deploy the application, copy it between machines, and update it separately from the operating system. This process affords us a portable and easily maintained component instead of tightly coupling the application with your operating system maintenance.
-
-* In closing we will build a second container on a different operating system version that makes an application not packaged into RPMs. This will be similar to a web application deployment, positioning the correct files at the right locations. To do this, we will pull a project from GitHub and position the component files within our container image. The purpose of this is to achieve a portable application container that can deploy on several different versions of Red Hat Enterprise Linux. This also provides the benefit of decoupling your application maintenance, which would all happen by building new containers versus operating system maintenance. The container is no longer reliant on the operating system installed on the machine where the application is deployed.
-
-. Now let's examine this cluster a bit more by describing the cluster (the `$GUID` environment variable is already set for you so you can immediately describe your individual cluster):
-+
-[source,sh,role=execute]
-----
-podman ps
-----
-+
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-CONTAINER ID  IMAGE                        COMMAND           CREATED      STATUS      PORTS                 NAMES
-2dcfee9e50c4  docker.io/library/httpd:2.4  httpd-foreground  3 hours ago  Up 3 hours  0.0.0.0:8080->80/tcp  showroom-httpd
-----
-
-=== Lab Access
+== Lab Environement
 
 The terminal window to your right is *already* logged into the lab environment as the `{ssh_user}` user via `ssh`.
 All steps of this lab are to be completed as the `{ssh_user}` user.
+
+
+The lab environment is a Red Hat OpenShift 4.20 cluster with all the operators required for your assignement pre-installed : 
+
+* OpenShift Virtualization
+* Node Health Check Operator
+* Self Node Remediation Operator
+* Kube Descheduler Operator
+
+
+The cluster Web Console is accessible at https://console-openshift-console.apps.ocp4.example.com.
+The username is `admin` and the password is `redhatocp`.
+The cluster API is accessible at https://api.ocp4.example.com:6443.
+The username is `admin` and the password is `redhatocp`.
+
