@@ -38,7 +38,7 @@ oc login -u admin -p redhatocp https://api.ocp4.example.com:6443
 ----
 
 
-== 2. Check which virtual machines are running in the `dynamic-schedule` namespace
+=== 2. Check which virtual machines are running in the `dynamic-schedule` namespace
 
 [source,sh,role=execute]
 ----
@@ -58,7 +58,7 @@ Or using the OpenShift Virtualization console, you can see the VMs in the `dynam
 
 image::exercise5/05-image-vm-list.png[title="VM List", link=self, window=blank, width=100%]
 
-== 3. Configure the Descheduler Operator
+=== 3. Configure the Descheduler Operator
 
 [source,sh,role=execute]
 ----
@@ -94,7 +94,7 @@ spec:
 NOTE: Notice the mode is set to Predictive. By default, the descheduler does not evict pods. To evict pods, set mode to Automatic.
 
 
-= 4. Ensure the descheduler pod is running and check the logs in the openshift-kube-descheduler-operator namespace
+=== 4. Ensure the descheduler pod is running and check the logs in the openshift-kube-descheduler-operator namespace
 
 [source,sh,role=execute]
 ----
@@ -102,27 +102,27 @@ oc logs -n openshift-kube-descheduler-operator -l app=descheduler
 ----
 
 
-= 5. Deploy a stress test pod to validate the descheduler functionality
+=== 5. Deploy a stress test pod to validate the descheduler functionality
 
-== 5.1 Create a new project for the stress test
+==== 5.1 Create a new project for the stress test
 [source,sh,role=execute]
 ----
 oc new-project stress-test
 ----
 
-== 5.2 Create the configuration from a config map
+==== 5.2 Create the configuration from a config map
 [source,sh,role=execute]
 ----
 oc apply -f https://raw.githubusercontent.com/mmayeras/k8s-stress-test/refs/heads/main/stress-config.yaml
 ----
 
-== 5.3 Create the deployment
+==== 5.3 Create the deployment
 [source,sh,role=execute]
 ----
 https://raw.githubusercontent.com/mmayeras/k8s-stress-test/refs/heads/main/stress-deploy.yaml
 ----
 
-== 5.4 Edit the deployment to use a specific node selector
+==== 5.4 Edit the deployment to use a specific node selector
 
 [source,sh,role=execute]
 ----
@@ -135,7 +135,7 @@ oc patch deployment stress-test -p '{"spec":{"template":{"spec":{"nodeSelector":
 oc get pods -n stress-test
 ----
 
-== 5.6 Observe the descheduler pod logs in the openshift-kube-descheduler-operator namespace
+==== 5.6 Observe the descheduler pod logs in the openshift-kube-descheduler-operator namespace
 [source,sh,role=execute]
 ----
 oc logs -f -n openshift-kube-descheduler-operator -l app=descheduler
@@ -155,19 +155,19 @@ I1113 15:30:00.673755       1 evictions.go:551] "Evicted pod in dry run mode" po
 
 NOTE: Notice the mode is set to Predictive so the eviction is in dry run mode. To evict pods, set mode to Automatic.
 
-== 6. Turn on the descheduler mode to Automatic
+=== 6. Turn on the descheduler mode to Automatic
 [source,sh,role=execute]
 ----
 oc -n openshift-kube-descheduler-operator patch kubedescheduler cluster --type merge -p '{"spec":{"mode":"Automatic"}}'
 ----
 
-== 7. Verify the descheduler pod logs in the openshift-kube-descheduler-operator namespace
+=== 7. Verify the descheduler pod logs in the openshift-kube-descheduler-operator namespace
 [source,sh,role=execute]
 ----
 oc logs -f -n openshift-kube-descheduler-operator -l app=descheduler
 ----
 
-== 8. Confirm the pods are evicted and rescheduled on another node
+=== 8. Confirm the pods are evicted and rescheduled on another node
 
 [source,sh,role=execute]
 ----
