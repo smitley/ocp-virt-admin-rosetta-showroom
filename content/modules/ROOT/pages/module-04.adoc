@@ -45,9 +45,10 @@ oc get nodes
 oc label node <worker where node-affinity-vm is not running> zone=east
 ----
 
+Alternatively you can use the OpenShift Console by going to Compute → Nodes  and then pick a node where node-affinity-vm is not running. Then click the 3 dots and click edit labels.
+
 image::exercise4/04-image-affinity.png[title="Label Nodes", link=self, window=blank, width=100%]
 
-Alternatively you can use the OpenShift Console by going to Compute → Nodes  and then pick a node where node-affinity-vm is not running. Then click the 3 dots and click edit labels.
 
 [start=6]
 . Make sure the label was applied
@@ -84,6 +85,10 @@ image::exercise4/04-image-affinity03.png[title="Node Affinity Rule", link=self, 
 [source,bash]
 ----
 oc edit vm pod-anti-affinity-vm 
+----
+
+[source,bash]
+----
 :q!
 ----
 
@@ -236,6 +241,7 @@ oc get vmi pod-affinity-vm
 
 [start=5]
 . Click the Affinity rules
+image::exercise4/04-image-affinity04.png[title="Pod Affinity Rule", link=self, window=blank, width=100%]
 
 [start=6]
 . Add Affinity rule
@@ -255,6 +261,7 @@ oc get vmi pod-affinity-vm
 [start=11]
 . We are going to now set a key so this vm will run on the same node as node-affinity-vm. Set the key to app and values to node-affinity-vm. Your Final Pody Affinity rule will look like the picture below. Confirm this is true and click Save affinity rule.
 
+image::exercise4/04-image-affinity05.png[title="Pod Affinity Rule", link=self, window=blank, width=100%]
 
 [start=12]
 . Click Apply Rules
