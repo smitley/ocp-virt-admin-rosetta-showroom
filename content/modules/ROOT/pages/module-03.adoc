@@ -96,7 +96,7 @@ image::exercise3/03-image-disk-005.png[title="The disk is added", link=self, win
 image::exercise3/03-image-disk-006.png[title="Kernel messages about a new disk", link=self, window=blank, width=100%]
 
 [start=7]
-. Login to the virtual machine using the credentials in the Console tab and then run the lsblk command. Note that the new 5 GiB disk has been added as `vdc`.
+. Login to the virtual machine using the credentials in the Console tab and then run the `lsblk` command. Note that the new 5 GiB disk has been added as `vdc`.
 
 image::exercise3/03-image-disk-007.png[title="View the new disk from the OS", link=self, window=blank, width=100%]
 
@@ -172,7 +172,7 @@ image::exercise3/03-image-disk-persist-005.png[title="Both disks are attached", 
 image::exercise3/03-image-disk-persist-006.png[title="Both disks are attached", link=self, window=blank, width=100%]
 
 [start=7]
-. Click on the Console tab and login to the virtual machine using the credentials above the console window.
+. Once the virtual machine has booted, click on the Console tab and login to the virtual machine using the credentials above the console window.
 The disk is now attached, although it has changed names. It was `vdc` and now it is `vdb`.
 In the previous exercise, if you chose to write data to the second disk, you will see that the data is still there.
 
@@ -220,7 +220,7 @@ image::exercise3/03-image-nic-006.png[title="Migrate the VM", link=self, window=
 . Follow the steps from xref:module-01.adoc#computerand[Module 1] to live migrate the VM from one node to any other worker node. Once the migration has completed, continue with this module.
 
 [start=8]
-. Navigate back to the Console tab and you may see messages have appeared on the VM console that new hardware has been added. You can view the new NIC from the operating system by running the command ip address and viewing the output.
+. Navigate back to the Console tab and you may see messages have appeared on the VM console that new hardware has been added. You can view the new NIC from the operating system by running the command `ip address` and viewing the output.
 
 image::exercise3/03-image-nic-008.png[title="Messages on consoel about new NIC", link=self, window=blank, width=100%]
 
