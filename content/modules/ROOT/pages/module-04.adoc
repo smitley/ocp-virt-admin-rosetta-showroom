@@ -6,7 +6,7 @@ In this lab, you will be applying Node Affinity, Pod Affinity, and Anti-Pod Affi
 
 
 [#nodeaffinity]
-= Node Affinity
+== Node Affinity
 
 [start=1]
 . First navigate to the affinity project.
@@ -109,8 +109,8 @@ oc get vmi node-affinity-vm
 ---- 
 
 [#podaffinity]
-= Pod Affinity
-We will now demonstrate  pod affinity.
+== Pod Affinity
+We will now demonstrate pod affinity.
 
 [start=1]
 . First we are going to add a label to node-affinity-vm. So we can make this the vm the pod that we will have node affinity to. On the OpenShift Console we are going to edit the vm and add the app: node-aff
@@ -308,7 +308,7 @@ oc get vmi node-affinity-vm
 
 
 [#podantiaffinity]
-= Pod Anti-Affinity
+== Pod Anti-Affinity
 
 [start=1]
 . We are going to use the node-affinity-vm and reusing app: node-affinity-vm label  we created last time to create our pod anti affinity rule.
