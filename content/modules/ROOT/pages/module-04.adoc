@@ -2,13 +2,14 @@
 
 = Affinity and Anti-Affinity for VM Placement
 
-In this lab, you will be applying Node Affinity, Pod Affinity, and Anti-Pod Affinity to Virtual Machines (VMs). The primary objective is to deepen your understanding of these principles and demonstrate how they can be applied effectively in real-world scenarios.
+This lab is designed to enhance your proficiency in applying Node Affinity, Pod Affinity, and Anti-Pod Affinity specifically to Virtual Machines. The core purpose is to illustrate the practical application of these principles in real-world scenarios and solidify your conceptual understanding.
 
 
 [#nodeaffinity]
 == Node Affinity
 
 Node Affinity defines rules that guide the scheduler to attract a Virtual Machine Pod to a specific node or group of nodes. These rules rely on matching labels applied to the nodes.
+
 The core use case for Node Affinity is to ensure that a VM runs only on nodes that possess specific hardware features, such as a particular GPU model or a high amount of RAM, by matching the corresponding labels on the node.
 
 This lab will demonstrate how Node Affinity is set up and how it functions.
@@ -43,20 +44,21 @@ oc get vmi node-affinity-vm
 ----
 
 [start=5]
-. Set an east node label on any work where the node-affinity-vm is currently not running
+. Set an east node label on any work where the node-affinity-vm is currently not running.
+
 [source,bash]
 ----
 oc get nodes
 oc label node <worker where node-affinity-vm is not running> zone=east
 ----
 
-Alternatively you can use the OpenShift Console by going to Compute → Nodes  and then pick a node where node-affinity-vm is not running. Then click the 3 dots and click edit labels.
+Alternatively you can use the OpenShift Console by going to Compute → Nodes and then pick a node where node-affinity-vm is not running. Then click the 3 dots and click edit labels.
 
 image::exercise4/04-image-affinity.png[title="Label Nodes", link=self, window=blank, width=100%]
 
 
 [start=6]
-. Make sure the label was applied
+. Make sure the label was applied.
 [source,bash]
 ----
 oc get nodes <worker you just labeled> --show-labels | grep -i zone=east
@@ -107,7 +109,7 @@ oc edit vm pod-anti-affinity-vm
 . Once the VM completely stops. Click Actions Start.
 
 [start=16]
-. On the GUI you can see that your vm has moved to the node where the label was set. You can also see this on the OCP CLI if you prefer
+. The VM's relocation to the node with the assigned label is visible via the GUI. Alternatively, you can verify this change using the OCP CLI.
 [source,bash]
 ----
 oc get vmi node-affinity-vm
@@ -122,7 +124,7 @@ The primary benefit of using pod affinity is to improve performance for dependen
 This lab will illustrate the setup and function of Pod Affinity.
 
 [start=1]
-. First we are going to add a label to node-affinity-vm. So we can make this the vm the pod that we will have node affinity to. On the OpenShift Console we are going to edit the vm and add the app: node-aff
+. To begin, we need to apply a label to the node-affinity-vm. This will enable it to serve as the VM that our pod will have pod affinity to. The label can be added by editing the VM within the OpenShift CLI and including app: node-affinity-vm
 [source,bash]
 ----
 oc edit vmi node-affinity-vm -n affinity
@@ -282,6 +284,10 @@ image::exercise4/04-image-affinity05.png[title="Pod Affinity Rule", link=self, w
 [source,bash]
 ----
 oc edit vm pod-anti-affinity-vm 
+---- 
+
+[source,bash]
+----
 :q!
 ----
 
@@ -327,7 +333,7 @@ This lab will guide you through setting up and demonstrating the functionality o
 
 
 [start=1]
-. We are going to use the node-affinity-vm and reusing app: node-affinity-vm label  we created last time to create our pod anti affinity rule.
+. We are going to use the node-affinity-vm and reuse the app: node-affinity-vm label we created last time to create our pod anti affinity rule.
 [start=2]
 . Click the pod-affinity-vm  
 
@@ -355,7 +361,8 @@ image::exercise4/04-image-affinity06.png[title="Add Pod Anti-Affinity Rule", lin
 . Click Add expression under Workload labels
 
 [start=10]
-. We are going to now set a key so this vm will run on the same node as node-affinity-vm. Set the key to app and values to node-affinity-vm. Your Final Pody Affinity rule will look like the picture below. Confirm this is true and click Save affinity rule.
+. Next, we will set a key and value to establish Pod Anti-affinity
+, ensuring this VM runs on the same node as node-affinity-vm. Set the key to app and the value to node-affinity-vm. The resulting Pod Affinity rule should match the illustration provided below. Verify the rule's correctness, then click Save affinity rule.
 
 image::exercise4/04-image-affinity06.png[title="Add Pod Anti-Affinity Rule", link=self, window=blank, width=100%]
 
@@ -389,7 +396,7 @@ oc get vmi node-affinity-vm
 . To make the vm follow these new affinity rules. You normally would migrate it to the node with the label. However, to show that this affinity rule is working. We are going to power off the vm completely and then power it back on.
 
 [start=15]
-. On the oc get vmi pod-anti-affinity-vm Click Action stop.
+. On the pod-anti-affinity-vm Click Action stop.
 
 [start=16]
 . Once the VM completely stops. Click Actions Start.
