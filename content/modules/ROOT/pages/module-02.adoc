@@ -252,13 +252,15 @@ The wasp-agent component documentation can be found here : https://docs.redhat.c
 
 We won't configure the wasp-agent component in this lab.
 
+The `memoryOvercommitPercentage` parameter tells CNV how to scale the memory request that is made for each VM created. So when set to 100, CNV calculates its memory request based on the full declared memory size of the VM; when it's set to a higher value, CNV sets the request to a smaller value than that actually required by the VM, allowing overcommitting of memory. 
 
+For example, with a VM with 16 GiB configured, if the overcommit percentage is set to its default value of 100, the memory request that CNV will apply to the pod is 16 GiB plus some extra for the overhead of the QEMU process running the VM. If it's set to 200, the request will be set to 8 GiB plus the overhead.
 
 
 === Instructions
 
 [start=1]
-. By default, the memory overcommit ratio is 1:1. This means that the amount of memory requested by a VM is equal to the amount of memory allocated to the VM.
+. Memory requests with the default overcommit percentage
 
 
 Observe the memory requests for the virt-launcher pod compared to the memory allocated to the VM :
@@ -289,6 +291,7 @@ NOTE: This overhead is necessary and expected - it ensures the VM has enough res
 
 [start=2]
 . Now let's enable the memory overcommit feature
+
 
 Navigate to Virtualization → Overview → Settings → Cluster → General Settings and Enable "Enable memory density"
 
