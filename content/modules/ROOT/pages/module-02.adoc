@@ -21,7 +21,7 @@ To allow for CPU overcommit, which is set to 10:1 by default, each VM’s virt-l
 
 However this default 10:1 CPU overcommit ratio can be configured to the desired overcommit level by changing the cluster CPU Allocation Ratio. Changing this ratio will influence the amount of cpu requests each vCPU is allocated by default, which enforces a max level of CPU overcommit through Kubernetes requests scheduling.
 
-NOTE: Note that resource assignments are made at virt-launcher pod scheduling time, so any VMs will need to be stopped and restarted to change CPU allocation behavior after a ratio change.
+NOTE: Note that resource assignments are made at virt-launcher pod scheduling time, so any VMs will need to be live migrated stopped and restarted to change CPU allocation behavior after a ratio change.
 
 === Instructions
 
