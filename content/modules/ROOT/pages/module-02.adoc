@@ -235,7 +235,7 @@ By design, Kubernetes, and hence OpenShift and OpenShift Virtualization, does no
 Memory oversubscription without use of swap is hazardous because if the amount of memory required by processes running on a node exceeds the amount of RAM available, processes will be killed. That's not desirable in any event, but particularly not for VMs where the workloads running on VMs will be taken down if the VMs are killed. 
 
 OpenShift Virtualization has built the wasp-agent component to permit controlled use of swap with VMs.
-The wasp-agent component documentation can be found here : https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/virtualization/postinstallation-configuration#virt-using-wasp-agent-to-configure-higher-vm-workload-density_virt-configuring-higher-vm-workload-density
+The wasp-agent component documentation can be found https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/virtualization/postinstallation-configuration#virt-using-wasp-agent-to-configure-higher-vm-workload-density_virt-configuring-higher-vm-workload-density[here].
 
 We won't configure the wasp-agent component in this lab.
 
