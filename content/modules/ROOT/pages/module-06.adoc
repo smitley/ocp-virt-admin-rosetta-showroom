@@ -58,7 +58,7 @@ To monitor the process, open two additional terminal sessions and SSH into the b
 . In one terminal run a command to continually monitor the state of the worker node you found above (e.g. `worker-cluster-pjhxm-1`, but your node name will be different).
 
 ----
-oc get nodes <worker from step 5> -w
+$ oc get nodes <worker from step 5> -w
 ----
 
 [start=8]
@@ -66,22 +66,56 @@ oc get nodes <worker from step 5> -w
 Here you will see that self remediation is occurring on the node.
 
 ----
-oc get -n fencing vmi -w
+$ oc get -n fencing vmi -w
 ----
 
 [start=9]
 . Using the original terminal you created, you will force the worker from step 5 to go into an unhealthy state by stopping the kubelet service.
 
 ----
-oc debug node/<worker from step 5>
-chroot /host
-systemctl stop kubelet
+$ oc debug node/<worker from step 5>
+# chroot /host
+# systemctl stop kubelet
+
+Removing debug pod ...
 ----
 
 [start=10]
 . Navigate to Ecosystem → Installed Operators → Self Node Remediation Operator → Self Node Remediation
 Here you can see that self remediation is occurring on the node.
 
+image::exercise6/06-image-nodehealthcheck4.png[title="Node remediation running", link=self, window=blank, width=100%]
 
 [start=11]
 . The VM will then proceed through scheduling and be scheduled onto a new node, where it will begin running. Concurrently, the original node will undergo remediation by the Self Node Remediation operator and be restored to a healthy state.
+
+The node will be rebooted:
+----
+$ oc get nodes worker-cluster-pjhxm-1 -w
+NAME                     STATUS                        ROLES    AGE     VERSION
+worker-cluster-pjhxm-1   Ready                         worker   4h15m   v1.33.5
+worker-cluster-pjhxm-1   Ready                         worker   4h16m   v1.33.5
+worker-cluster-pjhxm-1   NotReady                      worker   4h16m   v1.33.5
+worker-cluster-pjhxm-1   NotReady                      worker   4h16m   v1.33.5
+worker-cluster-pjhxm-1   NotReady,SchedulingDisabled   worker   4h16m   v1.33.5
+worker-cluster-pjhxm-1   NotReady,SchedulingDisabled   worker   4h16m   v1.33.5
+worker-cluster-pjhxm-1   Ready,SchedulingDisabled      worker   4h17m   v1.33.5
+worker-cluster-pjhxm-1   Ready,SchedulingDisabled      worker   4h17m   v1.33.5
+worker-cluster-pjhxm-1   Ready,SchedulingDisabled      worker   4h17m   v1.33.5
+worker-cluster-pjhxm-1   Ready                         worker   4h18m   v1.33.5
+worker-cluster-pjhxm-1   Ready                         worker   4h18m   v1.33.5
+----
+
+The VM will also be restarted on another node:
+----
+$ oc get -n fencing vmi -w
+NAME          AGE   PHASE        IP            NODENAME                 READY
+fencing-vm1   36m   Running      10.235.0.14   worker-cluster-pjhxm-1   True
+fencing-vm1   37m   Running      10.235.0.14   worker-cluster-pjhxm-1   False
+fencing-vm1   38m   Failed       10.235.0.14   worker-cluster-pjhxm-1   False
+fencing-vm1   38m   Failed       10.235.0.14   worker-cluster-pjhxm-1   False
+fencing-vm1   0s    Pending                                          
+fencing-vm1   1s    Scheduling                                          False
+fencing-vm1   10s   Scheduled                  worker-cluster-pjhxm-2   False
+fencing-vm1   10s   Running      10.232.2.41   worker-cluster-pjhxm-2   True
+----
