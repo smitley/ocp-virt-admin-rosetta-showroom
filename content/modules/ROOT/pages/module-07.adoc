@@ -1,0 +1,20 @@
+[#fencing]
+= Decentralized Live Migration
+
+Decentralized live migration is a variation of storage live migration that allows you to migrate virtual machines between namespaces or between different, separated clusters.
+
+This can be useful for a variety of reasons including:
+
+Balancing Workload: Distributing virtual machines between clusters helps optimize resource utilization. If one cluster is heavily loaded while another is idle, rebalancing can significantly improve operational efficiency.
+
+Facilitating Maintenance: For environments with multiple clusters, virtual machine migration allows for seamless maintenance. You can move virtual machines off a cluster slated for upgrades or shutdown, ensuring zero downtime for your services.
+
+Expediting Restores: Instant restore capabilities from backup vendors, particularly when coupled with namespace migration, can drastically speed up recovery times. virtual machines can be quickly restored to a temporary location and then migrated to their original namespace and storage.
+
+This lab demonstrates the forthcoming Tech Preview capabilities of Decentralized Live Migration. In this lab, we will walk through the live migration of a `VirtualMachine` from one `Namespace` to another. The process of live migrating between namespaces follows the same process as if you were to migrate a `VirtualMachine` between 2 clusters.
+
+[NOTE]
+=====
+The UI based workflow is not finished yet. During this lab we will introduce you to the UI workflow, but perform the migration through the CLI.
+=====
+
