@@ -30,24 +30,24 @@ In this module, we will guide you through the process of configuring Reschedulin
 == Instructions
 . Login into your bastion host with credentials provided to you by the lab administrator. You will need this for later steps.
 +
-
-----	
+.SSH Command
+[,bash,role=execute]
+----
 ssh lab-user@<host> -p 32270
 ----
-
-
++
 . Using the credentials provided by the lab administrator, log in to the OpenShift CLI from your terminal on the bastion host. Be sure to substitute the placeholder password and cluster name with the specific values you were given.
 +
-
+[source,sh,role=execute,subs="attributes"]
+.Log in to the OpenShift cluster
 ----
-oc login -u admin -p <password> --server=https://api.cluster-<clustername>.dynamic.redhatworkshops.io:6443
+oc login -u admin -p <password> --server=https://api.cluster-{guid}.dynamic.redhatworkshops.io:6443
 oc login whoami --show-console
 ----
-
-
++
 . Check which virtual machines are running in the `dynamic-schedule` namespace
 +
-
+[source,sh,role=execute,subs="attributes"]
 ----
 oc get vmi -n dynamic-schedule
 ----
@@ -70,6 +70,7 @@ oc -n openshift-kube-descheduler-operator edit kubedescheduler cluster
 You should see the following output:
 +
 [source,yaml]
+.Sample Output
 ----
 apiVersion: operator.openshift.io/v1
 kind: KubeDescheduler
@@ -78,7 +79,7 @@ metadata:
   namespace: openshift-kube-descheduler-operator
 spec:
   logLevel: Normal
-  mode: Predictive
+  mode: Predictive <1>
   operatorLogLevel: Normal
   profileCustomizations:
     devEnableSoftTainter: true
@@ -88,12 +89,12 @@ spec:
       included:
         - dynamic-schedule
   profiles:
-    - KubeVirtRelieveAndMigrate 
+    - KubeVirtRelieveAndMigrate
   # This is the interval at which the descheduler will run ; Set a lower value for testing purposes :
-  deschedulingIntervalSeconds: 3600 
-  managementState: Managed     
+  deschedulingIntervalSeconds: 3600
+  managementState: Managed
 ----
-NOTE: Notice the mode is set to Predictive. By default, the descheduler does not evict pods. To evict pods, set mode to Automatic.
+1. Notice the mode is set to Predictive. By default, the descheduler does not evict pods. To evict pods, set mode to Automatic.
 +
 [start=5]
 . Ensure the descheduler pod is running and check the logs in the openshift-kube-descheduler-operator namespace
@@ -172,7 +173,7 @@ oc logs -f -n openshift-kube-descheduler-operator -l app=descheduler
 oc get pods -n dynamic-schedule -o wide
 ----
 +
-You should now see the two vms running on the same node: 
+You should now see the two vms running on the same node:
 +
 [source,text]
 ----
