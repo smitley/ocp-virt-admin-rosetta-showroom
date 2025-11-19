@@ -25,7 +25,7 @@ In this lab, you will be performing a live migration of a virtual machine
 from one compute node to another. To do this, you will access a running VM,
 determine its current node, and then move it to another node.
 
-Requirements
+*Requirements*
 
 * The underlying PVC must use ReadWriteMany (RWX) access mode
 
@@ -35,42 +35,42 @@ Requirements
 
 * CPU model must match on the source and destination node
 
-Instructions
+*Instructions*
 [start=1]
 . Access the lab
 Login to the OpenShift console using the credentials provided to you by the lab administrator.
 Identify the URL for the OpenShift web console 
 
 [start=2]
-. Navigate to Virtualization -> Virtual Machines and then click on the virtual machine named `live-migrate-vm1`.
-Note which node the VM is currently running on. In this example, it is worker-cluster-m2ssq-1, but your worker node will be different.
-
+. Navigate to Virtualization -> Virtual Machines and then click on the virtual machine named *live-migrate-vm1*.
+Note which node the VM is currently running on. In this example, it is *worker-cluster-m2ssq-1*, but your worker node will be different.
++
 image::exercise1/01-image-compute-002.png[title="Virtual machine details", link=self, window=blank, width=100%]
 
 [start=3]
 . To migrate the VM to another worker node, click on the Actions menu, hover over Migration, and then click on Compute.
-
++
 image::exercise1/01-image-compute-003.png[title="Initiate migration", link=self, window=blank, width=100%]
 
 [start=4]
 . You will be presented with a window that asks if you would like to select the target worker node Automatically or to select a Specific Node.
-
++
 image::exercise1/01-image-compute-004.png[title="Configure migration", link=self, window=blank, width=100%]
 
 [start=5]
-. Change the selection to Specific Node and then check the box next to a node (e.g. `worker-cluster-m2ssq-1`. Your lab will have a different node name).
-
+. Change the selection to Specific Node and then check the box next to a node (e.g. *worker-cluster-m2ssq-1*. Your lab will have a different node name).
++
 image::exercise1/01-image-compute-005.png[title="Select worker node", link=self, window=blank, width=100%]
 
 [start=6]
-. Wait a few moments and you will see that the Virtual Machine status changes from `Running` to `Migrating`.
-
+. Wait a few moments and you will see that the Virtual Machine status changes from *Running* to *Migrating*.
++
 image::exercise1/01-image-compute-006.png[title="VM is migrating", link=self, window=blank, width=100%]
 
 [start=7]
-. A few moments after that, the Virtual Machine status will return to `Running`.
-Note that the worker node is now on the new worker node (e.g. `worker-cluster-m2ssq-1`).
-
+. A few moments after that, the Virtual Machine status will return to *Running*.
+Note that the worker node is now on the new worker node (e.g. *worker-cluster-m2ssq-1*).
++
 image::exercise1/01-image-compute-007.png[title="VM is running", link=self, window=blank, width=100%]
 
 [start=8]
@@ -88,7 +88,7 @@ In this lab, you will be performing a live migration of a virtual machine
 from one compute node to another. To do this, you will access a running VM,
 determine its current node, and then move it to another node.
 
-Requirements
+*Requirements*
 
 * The underlying PVC must use ReadWriteMany (RWX) access mode
 
@@ -98,37 +98,39 @@ Requirements
 
 * CPU model must match on the source and destination node
 
+*Instructions*
+
 [start=1]
 . Access the lab
 Login to the OpenShift console using the credentials provided to you by the lab administrator.
 Identify the URL for the OpenShift web console 
 
 [start=2]
-. Navigate to Virtualization -> Virtual Machines and then click on the virtual machine named `live-migrate-vm1`.
-Note which worker node the VM is currently running on (example: `worker-cluster-m2ssq-1`. Your cluster will have a different node name).
-
+. Navigate to Virtualization -> Virtual Machines and then click on the virtual machine named *live-migrate-vm1*.
+Note which worker node the VM is currently running on (example: *worker-cluster-m2ssq-1*. Your cluster will have a different node name).
++
 image::exercise1/01-image-compute-002.png[title="Virtual machine details", link=self, window=blank, width=100%]
 
 [start=3]
 . To migrate the VM to another worker node, click on the Actions menu, hover over Migration, and then click on Compute.
-
++
 image::exercise1/01-image-compute-003.png[title="Initiate migration", link=self, window=blank, width=100%]
 
 [start=4]
 . You will be presented with a window that asks if you would like to select the target worker node Automatically or to select a Specific Node.
 Leave the selection at the default, which is to migrate to an Automatically selected Node
-
++
 image::exercise1/01-image-compute-004.png[title="Configure migration", link=self, window=blank, width=100%]
 
 [start=6]
-. Wait a few moments and you will see that the Virtual Machine status changes from `Running` to `Migrating`.
-
+. Wait a few moments and you will see that the Virtual Machine status changes from *Running* to *Migrating*.
++
 image::exercise1/01-image-compute-006.png[title="VM is migrating", link=self, window=blank, width=100%]
 
 [start=7]
-. A few moments after that, the Virtual Machine status will return to `Running`.
-Note that the worker node has changed (e.g. worker-cluster-m2ssq-3).
-
+. A few moments after that, the Virtual Machine status will return to *Running*.
+Note that the worker node has changed (e.g. *worker-cluster-m2ssq-3*).
++
 image::exercise1/01-image-compute-007.png[title="VM is running", link=self, window=blank, width=100%]
 
 [start=8]
@@ -144,61 +146,62 @@ allows the migration of PVCs from one StorageClass to another while the virtual 
 NOTE: This is similar to the VMware Storage vMotion feature for VMs.
 
 [start=1]
-. Login to the OpenShift console using the credentials provided to you by the lab administrator. Navigate to Virtualization -> Virtual Machines, and select the virtualmachines project. Select the VM named `live-migrate-vm1`.
-
+. Login to the OpenShift console using the credentials provided to you by the lab administrator. Navigate to Virtualization -> Virtual Machines, and select the virtualmachines project. Select the VM named *live-migrate-vm1*.
++
 image::exercise1/01-image-storage-001.png[title="Virtual machine details", link=self, window=blank, width=100%]
 
 [start=2]
-. Click on the Configuration tab and select Storage. Note that the VM currently has a single bootable disk that is using the StorageClass called `ocs-external-storagecluster-ceph-rbd`.
-
+. Click on the Configuration tab and select Storage. Note that the VM currently has a single bootable disk that is using the StorageClass called *ocs-external-storagecluster-ceph-rbd*.
++
 image::exercise1/01-image-storage-002.png[title="View storage details", link=self, window=blank, width=100%]
 
 [start=3]
 . Click on the Console tab and login to the virtual machine using the credentials above the console window.
 Run a command, such as `top` or `ping`, that will continue running as we perform the remainder of this exercise.
-
++
 image::exercise1/01-image-storage-003.png[title="Run command on console", link=self, window=blank, width=100%]
 
 [start=4]
 . Click on the Actions menu and hover over Migration and click on Storage.
-
++
 image::exercise1/01-image-storage-004.png[title="Initiate storage migration", link=self, window=blank, width=100%]
 
 [start=5]
 . In the window that appears, review the options and then click on Next. It is not necessary to change any settings at this time.
-
++
 image::exercise1/01-image-storage-005.png[title="Migration details", link=self, window=blank, width=100%]
 
 [start=6]
-. In the next screen, select the Destination Storage Class called `custom-storage-class`.
+. In the next screen, select the Destination Storage Class called *custom-storage-class*.
 Click Next.
-
++
 image::exercise1/01-image-storage-006.png[title="Select destination StorageClass", link=self, window=blank, width=100%]
 
 [start=7]
 . Review the storage migration configuration and then click on Migrate VirtualMachine storage.
-
++
 image::exercise1/01-image-storage-007.png[title="Review migration details", link=self, window=blank, width=100%]
 
 [start=8]
-. The next window will show you the status of the storage migration. It is safe to close the window with the `X` in the top corner, or you may click on the link to `View storage migrations`.
-Do not click the Stop button.
-
+. The next window will show you the status of the storage migration. It is safe to close the window with the *X* in the top corner, or you may click on the link to *View storage migrations*.
+Do not click the *Stop* button.
++
 image::exercise1/01-image-storage-008.png[title="Migration has started", link=self, window=blank, width=100%]
 
 [start=9]
-. To view the storage migration status, navigate to Migration -> Storage migration where you can view the status of the migration plan. The migration plan will start in the `Pending` state, then move to `Running`, then finally `Completed`. 
+. To view the storage migration status, navigate to Migration -> Storage migration where you can view the status of the migration plan. The migration plan will start in the *Pending* state, then move to *Running*, then finally *Completed*. 
++
 NOTE: It may take some time for the migration to complete.
-
++
 image::exercise1/01-image-storage-009.png[title="Migration is running", link=self, window=blank, width=100%]
 
 [start=10]
-. Once the migration is Complete, navigate back to the virtual machine called `live-migrate-vm1` and view the Configuration -> Storage options again.
-Note that the name of the Source has changed and the Storage class has changed to `custom-storage-class`, which is what you selected in the storage migration plan.
-
+. Once the migration is Complete, navigate back to the virtual machine called *live-migrate-vm1* and view the Configuration -> Storage options again.
+Note that the name of the Source has changed and the Storage class has changed to *custom-storage-class*, which is what you selected in the storage migration plan.
++
 image::exercise1/01-image-storage-010.png[title="VM has been migrated", link=self, window=blank, width=100%]
 
 [start=11]
 . Click on the Console tab. You will see that your application is still running uninterrupted.
-
++
 image::exercise1/01-image-storage-011.png[title="No interruption during storage migration", link=self, window=blank, width=100%]
