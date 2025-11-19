@@ -6,8 +6,8 @@
 ** xref:module-01.adoc#storage[Storage Migration]
 
 * xref:module-02.adoc[2. CPU and Memory Overcommit ]
-** xref:module-02.adoc#cpu[CPU]
-** xref:module-02.adoc#memory[Memory]
+** xref:module-02.adoc#cpu[CPU Overcommit]
+** xref:module-02.adoc#memory[Memory Overcommit]
 
 
 * xref:module-03.adoc[3. Hot Plugging Resources  ]
