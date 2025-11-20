@@ -61,13 +61,6 @@ To monitor the process, open one additional terminal sessions and SSH into the b
 $ oc get nodes <worker from step 5> -w
 ----
 
-[start=8]
-. In your orginal terminal you opened, you will monitor the status of your virtual machine, `fencing-vm1`.
-Here you will see that self remediation is occurring on the node.
-+
-----
-$ oc get -n fencing vmi -w
-----
 
 [start=8]
 . Using the original terminal you created, you will force the worker from step 5 to go into an unhealthy state by stopping the kubelet service.
@@ -89,12 +82,20 @@ $ oc get -n fencing vmi -w
 ----
 
 [start=10]
+. In your orginal terminal you opened, you will monitor the status of your virtual machine, `fencing-vm1`.
+Here you will see that self remediation is occurring on the node.
++
+----
+$ oc get -n fencing vmi -w
+----
+
+[start=11]
 . Navigate to Ecosystem → Installed Operators → Self Node Remediation Operator → Self Node Remediation
 Here you can see that self remediation is occurring on the node.
 +
 image::exercise6/06-image-nodehealthcheck4.png[title="Node remediation running", link=self, window=blank, width=100%]
 
-[start=11]
+[start=12]
 . The VM will then proceed through scheduling and be scheduled onto a new node, where it will begin running. Concurrently, the original node will undergo remediation by the Self Node Remediation operator and be restored to a healthy state.
 +
 The node will be rebooted:
