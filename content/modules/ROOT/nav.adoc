@@ -33,3 +33,4 @@
 ** xref:module-07.adoc#howdeclm[How does it work?]
 ** xref:module-07.adoc#decmlrequirements[Requirements]
 ** xref:module-07.adoc#decmlinstructions[Instructions]
+** xref:module-07.adoc#decmlmonitor[Monitor the Migration]

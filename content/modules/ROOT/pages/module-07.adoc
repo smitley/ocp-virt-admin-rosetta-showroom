@@ -348,13 +348,11 @@ spec:
 EOF
 ----
 
-+
-[start=9]
-. When the source `VirtualMachineInstanceMigration` above is created, the `Migration` will start. You can monitor the `Migration` through a few different lenses:
+[#decmlmonitor]
+== Monitor the Migration
+When the source `VirtualMachineInstanceMigration` above is created, the `Migration` will start. You can monitor the `Migration` through a few different lenses:
 
-+
-[loweralpha]
-.. *Using the CLI*
+. *Using the CLI*
 
 +
 [.wrap,console,role=execute]
@@ -402,8 +400,8 @@ vm-migration-ns-ns-live   7m1s   Migrating   False
 ----
 
 +
-[loweralpha,start=2]
-.. *Using the Console*
+[start=2]
+. *Using the Console*
 
 +
 Login to the OpenShift console using the credentials provided to you by the lab administrator.
