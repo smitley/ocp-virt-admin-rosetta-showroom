@@ -41,7 +41,7 @@ oc login -u admin -p <password> --server=https://api.cluster-<clustername>.dynam
 ----
 
 [start=5]
-. Next, locate the node hosting `fencing-vm1` located within the `fencing` project section and record this information. In this example, the node name is `worker-cluster-pjhxm-1`.
+. Next, locate the node hosting `fencing-vm1` located within the `fencing` project section and record this information. In this example, the node name is `worker-cluster-r2k68-1`.
 +
 ----
 $ oc get vmi -n fencing
@@ -51,11 +51,11 @@ fencing-vm1   169m   Running   10.235.0.29   worker-cluster-r2k68-1   True
 
 [start=6]
 . In the next steps, we will create a failure condition and monitor the effects on the OpenShift node.
-To monitor the process, open two additional terminal sessions and SSH into the bastion host from each, as described above.
+To monitor the process, open one additional terminal sessions and SSH into the bastion host from each, as described above.
 
 
 [start=7]
-. In one terminal run a command to continually monitor the state of the worker node you found above (e.g. `worker-cluster-pjhxm-1`, but your node name will be different).
+. In second terminal run a command to continually monitor the state of the worker node you found above (e.g. `worker-cluster-r2k68-1`, but your node name will be different).
 +
 ----
 $ oc get nodes <worker from step 5> -w
