@@ -44,7 +44,7 @@ The lab environment is a Red Hat OpenShift 4.20 cluster with all the operators r
 Web Console: {openshift_cluster_console_url}[{openshift_cluster_console_url},window=_blank]
 
 .Web Console:
-[.wrap,console,role=execute,subs="attributes,macros+"]
+[.wrap,console,role=execute,subs="attributes,macros"]
 ----
 {openshift_cluster_console_url}[{openshift_cluster_console_url},window=_blank]
 ----
