@@ -66,11 +66,11 @@ NAME     AGE     PHASE     IP             NODENAME
 dynamic-schedule-vm1    10m     Running   10.129.2.111   worker01
 ----
 
-. Configure the Descheduler Operator
+. Observe the Descheduler Operator configuration
 +
 [,shell,role=execute,subs="attributes"]
 ----
-oc -n openshift-kube-descheduler-operator edit kubedescheduler cluster
+oc -n openshift-kube-descheduler-operator get kubedescheduler cluster -o yaml
 ----
 +
 [,shell,role="wrap",subs="attributes"]
