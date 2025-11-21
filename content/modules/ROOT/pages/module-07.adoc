@@ -45,6 +45,12 @@ oc login -u {openshift_cluster_admin_username} -p `{openshift_cluster_admin_pass
 ----
 
 +
+[subs="attributes"]
+----
+oc login -u {openshift_cluster_admin_username} -p `{openshift_cluster_admin_password}` --server=`{ocp_api_url}`
+----
+
++
 oc login -u `{openshift_cluster_admin_username}` -p `{openshift_cluster_admin_password}` --server={openshift_api_server_url}
 
 +
