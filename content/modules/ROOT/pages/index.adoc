@@ -2,20 +2,15 @@
 
 In this lab, we will guide you through the process of applying the Rosetta Stone to OpenShift Virtualization.
 
-
 OpenShift Virtualization is everywhere and has a major influence across our accounts.
 
 The interest level is high, but there is always the unavoidable question: How does it compare to other hypervisors?
 
-
 Moving beyond installation, configuration, and VM creation, the Rosetta Stone builds a mapping between traditional virtualization platforms and OpenShift Virtualization capabilities.
-
 
 Let's take that mapping and put it into practice to supercharge your knowledge and tackle those customer questions with confidence.
 
-
 In this lab, we will introduce and walk you through how to explain and demonstrate key administrative and VM owner capabilities around infrastructure optimization, workload availability, scalability, and resource management.
-
 
 You will walk away with the understanding, knowledge, and experience to showcase:
 
@@ -45,6 +40,8 @@ The lab environment is a Red Hat OpenShift 4.20 cluster with all the operators r
 * Kube Descheduler Operator
 * Migration Toolkit for Containers
 * Migration Toolkit for Virtualization
+
+include::vars.adoc[]
 
 The cluster Web Console is accessible at https://console-openshift-console.apps.ocp4.example.com.
 The username is `admin` and the password is `redhatocp`.

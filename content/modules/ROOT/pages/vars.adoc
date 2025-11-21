@@ -1,0 +1,7 @@
+:ocp_cloud: Virt on Virt
+:ocp_console_url: {openshift_console_url}
+:ocp_admin_username: {openshift_cluster_admin_username}
+:ocp_admin_password: {openshift_cluster_admin_password}
+:ocp_api_url: {openshift_api_url}
+:ocp_mtv_storage_class: ocs-external-storagecluster-ceph-rbd
+

@@ -36,6 +36,22 @@ These requirements have already been enabled on your cluster and are noted for y
 
 . Using the credentials provided by the lab administrator, log in to the OpenShift CLI from your terminal on the bastion host. Be sure to substitute the placeholder password and cluster name with the specific values you were given.
 
++
+[.wrap,console,role=execute]
+----
+oc login -u `{ocp_admin_username}` -p `{ocp_admin_password}` --server=`{ocp_api_url}`
+----
+
++
+oc login -u `{ocp_admin_username}` -p `{ocp_admin_password}` --server=`{ocp_api_url}`
+
++
+Username: `{openshift_cluster_admin_username}`
+
++
+Password: `{openshift_cluster_admin_password}`
+
++
 . Verify the source *VirtualMachineInstance* is running.
 +
 [.wrap,console,role=execute]
