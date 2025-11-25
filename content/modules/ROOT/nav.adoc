@@ -25,7 +25,7 @@
 *** xref:module-03.adoc#cpuinstructions[Instructions]
 ** xref:module-03.adoc#disk[Adding a virtual disk to a running VM]
 *** xref:module-03.adoc#diskinstructions[Instructions]
-**** xref:module-03.adoc#bonuslabinstructions[Bonus Lab - Convert a Hot Plug Disk to a Permanent Disk]
+*** xref:module-03.adoc#bonuslabinstructions[Bonus Lab - Convert a Hot Plug Disk to a Permanent Disk]
 ** xref:module-03.adoc#nic[Adding a NIC to a running VM]
 *** xref:module-03.adoc#nicinstructions[Instructions]
 
