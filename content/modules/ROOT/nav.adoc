@@ -31,8 +31,11 @@
 
 * xref:module-04.adoc[4. Affinity and Anti-Affinity for VM Placement]
 ** xref:module-04.adoc#nodeaffinity[Node Affinity]
+*** xref:module-04.adoc#nodeaffinityinstructions[Instructions]
 ** xref:module-04.adoc#podaffinity[Pod Affinity]
+*** xref:module-04.adoc#podaffinityinstructions[Instructions]
 ** xref:module-04.adoc#podantiaffinity[Pod Anti-Affinity]
+*** xref:module-04.adoc#podantiaffinityinstructions[Instructions]
 
 * xref:module-05.adoc[5. Dynamic Rescheduling of Workloads]
 ** xref:module-05.adoc#dynamicreschintro[Introduction]

@@ -1,9 +1,8 @@
-[4. Affinity and Anti-Affinity for VM Placement ]
-
 = Affinity and Anti-Affinity for VM Placement
 
 This lab is designed to enhance your proficiency in applying Node Affinity, Pod Affinity, and Anti-Pod Affinity specifically to Virtual Machines. The core purpose is to illustrate the practical application of these principles in real-world scenarios and solidify your conceptual understanding.
 
+include::lab-access.adoc[]
 
 [#nodeaffinity]
 == Node Affinity
@@ -14,63 +13,55 @@ The core use case for Node Affinity is to ensure that a VM runs only on nodes th
 
 This lab will demonstrate how Node Affinity is set up and how it functions.
 
+[#nodeaffinityinstructions]
+=== Instructions
+
 [start=1]
-. First navigate to the affinity project.
-Home → Project → affinity
+. Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
 
-[start=2]
-. Login into your bastion host with credentials provided to you by the lab administrator. You will need this for later steps. You will need this for later steps.
 +
-[source,text,role=execute]
-.Login to the bastion host
-----	
-ssh {ssh_user}@{ssh_password} -p 32270
-----
+. Navigate to the affinity project -> *Home → Project → affinity*
 
-[start=3]
-. Using the credentials provided by the lab administrator, log in to the OpenShift CLI from your terminal on the bastion host. Be sure to substitute the placeholder password and cluster name with the specific values you were given.
 +
-[source,text,role=execute]
-.Login to OpenShift
-----
-oc login -u {openshift_cluster_admin_username} -p {openshift_cluster_admin_password} --server={openshift_api_server_url}
-----
-
-[start=4]
 . Find out what node the node-affinity-vm is running on. 
 To do this you can look at the vm in the affinity project or you can use the openshift CLI.
+
 +
 [source,text,role=execute]
 .Change to affinity project
 ----
 oc project affinity
 ----
+
 +
-.Output
+[.wrap,console,subs="attributes"]
 ----
-Now using project "affinity" on server "https://api.cluster-k66tl.dynamic.redhatworkshops.io:6443".
+Now using project "affinity" on server {openshift_api_server_url}.
 ----
+
 +
 [source,text,role=execute]
 .Get VM information
 ----
 oc get vmi node-affinity-vm
 ----
+
 +
-.Output
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
 node-affinity-vm   78m   Running   10.235.0.25   worker-cluster-k66tl-1   True
 ----
 
-[start=5]
++
 . Set an east node label on any work where the node-affinity-vm is currently not running.
+
 +
 [source,text,role=execute]
 .Get node list
 ----
 oc get nodes
 ----
+
 +
 .Output
 ----
@@ -82,94 +73,105 @@ worker-cluster-k66tl-1          Ready    worker                        88m     v
 worker-cluster-k66tl-2          Ready    worker                        87m     v1.33.5
 worker-cluster-k66tl-3          Ready    worker                        86m     v1.33.5
 ----
+
 +
 [source,text,role=execute]
 .Label node
 ----
 oc label node <worker where node-affinity-vm is not running> zone=east
 ----
+
 +
 .Output
 ----
 node/worker-cluster-k66tl-3 labeled
 ----
+
 +
 Alternatively you can use the OpenShift Console by going to Compute → Nodes and then pick a node where *node-affinity-vm* is not running. Then click the 3 dots and click *Edit labels*. Once finished adding the label click *Save*.
+
 +
 image::exercise4/04-image-affinity.png[title="Label Nodes", link=self, window=blank, width=100%]
 
-
-[start=6]
++
 . Make sure the label was applied.
 
++
 [source,text,role=execute]
 .Find node with the assigned label
 ----
 oc get nodes <worker you just labeled> --show-labels | grep -i zone=east
 ----
 
++
 Alternatively you can use the OpenShift Console by going to Compute → Nodes and then pick a node you just label. Then click the 3 dots and click *Edit labels*. Once finished looking click *Save*.
 
-[start=7]
++
 . Navigate to Virtualization → Virtual Machines → node-affinity-vm → Configuration 
+
 +
 image::exercise4/04-image-affinity01.png[title="Node Affinity Navigation", link=self, window=blank, width=100%]
 
-
-[start=8]
++
 . Now navigate to Scheduling → Affinity rules
+
 +
 image::exercise4/04-image-affinity02.png[title="Node Affinity add rule", link=self, window=blank, width=100%]
 
-[start=9]
++
 . Click *Add affinity rule*.
+
 +
 image::exercise4/04-image-affinity02a.png[title="Node Affinity add rule", link=self, window=blank, width=100%]
 
-[start=10]
++
 . Change the condition to preferred during scheduling and set the weight to 75.
 Then, under *Node Labels* click *Add Expression*. Set the *Key* field to *zone* and the *Values* field to *east*, which is the label applied to the node earler. Your Final Node Affinity rule will look like the picture below. Confirm this is true and click *Save affinity rule*.
+
 +
 image::exercise4/04-image-affinity03.png[title="Node Affinity Rule", link=self, window=blank, width=100%]
 
-[start=11]
++
 . Then click *Apply rules*.
+
 +
 image::exercise4/04-image-affinity03a.png[title="Node Affinity Rule", link=self, window=blank, width=100%]
 
-[start=12]
++
 . Now let's take a look at the Node Affinity rule on node-affinity-vm. You can do this by using the GUI and going to YAML on the pod-anti-affinity-vm or you can do it on the CLI.
+
 +
 [source,text,role=execute]
 .View the VM definition
 ----
 oc -n affinity get vm/node-affinity-vm -o jsonpath='{.spec.template.spec.affinity}'
 ----
+
 +
-.Output
 ----
 {"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"preference":{"matchExpressions":[{"key":"zone","operator":"In","values":["east"]}]},"weight":75}]}}
 ----
 
-[start=13]
-. To make the VM follow these new affinity rules, you could migrate it to the node with the label. However, to show that this affinity rule is working we are going to power off the VM completely and then power it back on. 
 +
-[start=14]
+. To make the VM follow these new affinity rules, you could migrate it to the node with the label. However, to show that this affinity rule is working we are going to power off the VM completely and then power it back on. 
+
++
 . Click *Actions -> Stop*.
 
-[start=15]
++
 . Once the VM completely stops. Click *Actions -> Start*.
 
-[start=16]
++
 . The VM's relocation to the node with the assigned label is visible via the GUI. Alternatively, you can verify this change using the OCP CLI.
+
 +
 [source,text,role=execute]
 .Get VMI information
 ----
 oc get vmi node-affinity-vm
 ---- 
+
 +
-.Output
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
 node-affinity-vm   58s   Running   10.233.2.20   worker-cluster-k66tl-3   True
@@ -183,14 +185,22 @@ The primary benefit of using pod affinity is to improve performance for dependen
 
 This lab will illustrate the setup and function of Pod Affinity.
 
+[#podaffinityinstructions]
+=== Instructions
+
 [start=1]
-. To begin, we need to apply a label to the node-affinity-vm. This will enable it to serve as the VM that our pod will have pod affinity to. The label can be added by editing the VM within the OpenShift CLI and including app: fedora
+. Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
+
++
+. To begin, we need to apply a label to the *node-affinity-vm*. This will enable it to serve as the VM that our pod will have pod affinity to. The label can be added by editing the VM within the OpenShift CLI and including app: fedora
+
 +
 [source,text,role=execute]
 .Modify the VMI
 ----
 oc edit vmi node-affinity-vm -n affinity
 ----
+
 +
 [source,yaml,role=execute]
 ----
@@ -216,11 +226,13 @@ metadata:
     kubevirt.io/size: small
     network.kubevirt.io/headlessService: headless
 ----
+
 +
 [source,text,role=execute]
 ----
 :wq!
 ----
+
 +
 [source,text,role=execute]
 ----
@@ -297,12 +309,13 @@ spec:
 ----
 :wq!
 ----
+
 +
-[start=2]
 . Click the pod-affinity-vm  
 
-[start=3]
++
 . See where the pod-affinity-vm is running by looking at OpenShift Console or check on the OpenShift Command line. 
+
 +
 [source,text,role=execute]
 .Get VMI information
@@ -310,52 +323,57 @@ spec:
 oc get vmi pod-affinity-vm
 ----
 
-[start=4]
++
 . Click *Configure → Scheduling*.
 
-[start=5]
++
 . Click the *Affinity rules*.
+
 +
 image::exercise4/04-image-affinity04.png[title="Pod Affinity Rule", link=self, window=blank, width=100%]
 
-[start=6]
++
 . Click *Add affinity rule*.
 
-[start=7]
++
 . Change the type to *Workload (pod) Affinity*
 
-[start=8]
++
 . Keep the condition set to *Required during scheduling*.
 
-[start=9]
++
 . Leave the *Topology* key at the default value.
 
-[start=10]
++
 . Click *Add expression* under *Workload labels*.
 
-[start=11]
++
 . You will now set a key so this VM will run on the same node as *node-affinity-vm*. Set the *Key* field to *app* and the *Values* field to *fedora*. Your Final Pod Affinity rule will look like the picture below. Confirm this is true and click *Save affinity rule*.
+
 +
 image::exercise4/04-image-affinity05.png[title="Pod Affinity Rule", link=self, window=blank, width=100%]
 
-[start=12]
++
 . Click *Apply rules*
 
-[start=13]
++
 . Now let's take a look at the Pod Affinity rule on *pod-affinity-vm*. You can do this by using the GUI and going to YAML on the pod-anti-affinity-vm or you can do it on the CLI.
+
 +
 [source,text,role=execute]
 ----
 oc edit vm pod-anti-affinity-vm 
 ---- 
+
 +
 [source,text,role=execute]
 ----
 :q!
 ----
 
-[start=14]
++
 . See where the pod-affinity-vm and node-affinity-vm are running by looking at OpenShift Console or check on the OpenShift Command line. 
+
 +
 [source,text,role=execute]
 ----
@@ -363,17 +381,18 @@ oc get vmi pod-affinity-vm
 oc get vmi node-affinity-vm
 ----
 
-[start=15]
++
 . To make the vm follow these new affinity rules. You normally would migrate it to the node with the label. However, to show that this affinity rule is working. We are going to power off the vm completely and then power it back on. 
 
-[start=16]
++
 . On Click Action stop.
 
-[start=17]
++
 . Once the VM completely stops. Click Actions Start.
 
-[start=18]
++
 . See where the pod-affinity-vm and node-affinity-vm are running by looking at OpenShift Console or check on the OpenShift Command line. 
+
 +
 [source,text,role=execute]
 ----
@@ -381,7 +400,7 @@ oc get vmi pod-affinity-vm
 oc get vmi node-affinity-vm
 ----
 
-[start=19]
++
 . You will now see the the pod-affinity-vm is now running the same location as the node-affinity-vm because of the pod affinity rule.
 
 
@@ -394,47 +413,54 @@ The primary benefit of this rule is to enhance application resilience. For insta
 
 This lab will guide you through setting up and demonstrating the functionality of Pod Anti-Affinity.
 
+[#podantiaffinityinstructions]
+=== Instructions
 
 [start=1]
-. We are going to use the node-affinity-vm and reuse the app: fedora label we created last time to create our pod anti affinity rule.
+. Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
 
-[start=2]
++
+. We are going to use the *node-affinity-vm* and reuse the *app: fedora* label we created last time to create our pod anti affinity rule.
+
++
 . Click the pod-affinity-vm  
 
-[start=3]
++
 . Click Configure → scheduling
 
-[start=4]
++
 . Click the Affinity rules
 
-[start=5]
++
 . Add Affinity rule
+
 +
 image::exercise4/04-image-affinity06.png[title="Add Pod Anti-Affinity Rule", link=self, window=blank, width=100%]
 
-[start=6]
++
 . Change the type to  Workload (pod) Anti-Affinity
 
-[start=7]
++
 . Keep the condition to Required during scheduling.
 
-[start=8]
++
 . Keep the Topology key they same 
 
-[start=9]
++
 . Click Add expression under Workload labels
 
-[start=10]
-. Next, we will set a key and value to establish Pod Anti-affinity,
- ensuring this VM runs on a different node than node-affinity-vm. Set the key to app and the value to fedora. The resulting Pod Affinity rule should match the illustration provided below. Verify the rule's correctness, then click Save affinity rule.
++
+. Next, we will set a key and value to establish Pod Anti-affinity, ensuring this VM runs on a different node than node-affinity-vm. Set the key to app and the value to fedora. The resulting Pod Affinity rule should match the illustration provided below. Verify the rule's correctness, then click Save affinity rule.
+
 +
 image::exercise4/04-image-affinity07.png[title="Add Pod Anti-Affinity Rule", link=self, window=blank, width=100%]
 
-[start=11]
++
 . Click Apply Rules
 
-[start=12]
++
 . Now let's take a look at the Pod Anti Affinity rule on pod-anti-affinity-vm. You can do this by using the GUI and going to YAML on the pod-anti-affinity-vm or you can do it on the CLI.
+
 +
 [source,text,role=execute]
 ----
@@ -446,8 +472,9 @@ oc edit vm pod-anti-affinity-vm
 :q!
 ----
 
-[start=13]
++
 . See where the pod-affinity-vm and node-affinity-vm are running by looking at OpenShift Console or check on the OpenShift Command line. 
+
 +
 [source,text,role=execute]
 ----
@@ -455,17 +482,18 @@ oc get vmi pod-anti-affinity-vm
 oc get vmi node-affinity-vm
 ----
 
-[start=14]
++
 . To make the vm follow these new affinity rules. You normally would migrate it to the node with the label. However, to show that this affinity rule is working. We are going to power off the vm completely and then power it back on.
 
-[start=15]
++
 . On the pod-anti-affinity-vm Click Action stop.
 
-[start=16]
++
 . Once the VM completely stops. Click Actions Start.
 
-[start=17]
++
 . See where the pod-affinity-vm and node-affinity-vm are running by looking at OpenShift Console or check on the OpenShift Command line. 
+
 +
 [source,text,role=execute]
 ----
@@ -473,5 +501,5 @@ oc get vmi pod-anti-affinity-vm
 oc get vmi node-affinity-vm
 ----
 
-[start=18]
++
 . The  pod-anti-affinity-vm will now be running on a different node than node-affinity-vm. If pod-anti-affinity-vm was not already running on a different node then the node-affinity-vm. 
