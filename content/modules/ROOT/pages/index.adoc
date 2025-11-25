@@ -28,10 +28,10 @@ image::virt-icon-large.png[virt-icon-large,55%,55%,align="left"]
 [#labenvironment]
 == Lab Environment
 
-The terminal window to your right is *already* logged into the lab environment as the *{ssh_user}* user via *ssh*.
-All steps of this lab are to be completed as the *{ssh_user}* user.
+The terminal window to your right is *already* logged into the lab environment via the bastion host as the *{ssh_user}*.
+All steps of this lab are to be completed from the bastion host as the *{ssh_user}* logged in to the OpenShift cluster as *admin*.
 
-The lab environment is a Red Hat OpenShift 4.20 cluster with all the operators required for your assignement pre-installed : 
+The lab environment is running Red Hat OpenShift 4.20 with the following required operators pre-installed: 
 
 * OpenShift Virtualization
 * OpenShift Data Foundations

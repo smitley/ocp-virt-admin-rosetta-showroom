@@ -5,8 +5,14 @@
 
 * xref:module-01.adoc[1. Live Migration of Workloads]
 ** xref:module-01.adoc#compute[Compute Migration to a specific node]
+*** xref:module-01.adoc#computerequirements[Requirements]
+*** xref:module-01.adoc#computeinstructions[Instructions]
 ** xref:module-01.adoc#computerand[Compute Migration to a random node]
+*** xref:module-01.adoc#computerandrequirements[Requirements]
+*** xref:module-01.adoc#computerandinstructions[Instructions]
 ** xref:module-01.adoc#storage[Storage Migration]
+*** xref:module-01.adoc#storagerequirements[Requirements]
+*** xref:module-01.adoc#storageinstructions[Instructions]
 
 * xref:module-02.adoc[2. CPU and Memory Overcommit]
 ** xref:module-02.adoc#cpu[CPU Overcommit]
