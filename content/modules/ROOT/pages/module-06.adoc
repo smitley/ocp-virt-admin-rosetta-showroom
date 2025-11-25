@@ -5,65 +5,60 @@ Fencing is a vital mechanism, particularly in high-availability (HA) cluster con
 
 This lab demonstrates the capabilities of the Node Health Check Operator and the Self Node Remediation Operator. You will simulate a node failure to observe the virtual machine migration process and subsequent node recovery.
 
+include::lab-access.adoc[]
+
 [#fencinginstructions]
 == Instructions
 
-[start=1]
- . Navigate to Ecosystem → Installed Operators. Then click Node Health Check → create NodeHealthCheck
+. Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
+
++
+
+. Navigate to *Ecosystem → Installed Operators*. Then click *Node Health Check → create NodeHealthCheck*
+
 +
 Click the Create NodeHealthCheck button
+
 +
 image::exercise6/06-image-nodehealthcheck.png[title="Create NodeHealthCheck", link=self, window=blank, width=100%]
 
-[start=2]
 . Name the NodeHealthCheck `workerhealthcheck` and in the *Selector labels* menu, select *worker*.
+
 +
 image::exercise6/06-image-nodehealthcheck2.png[title="Create NodeHealthCheck", link=self, window=blank, width=100%]
+
 +
 Change duration to 5s for both of the Unhealthy Conditions.
+
 +
 image::exercise6/06-image-nodehealthcheck3.png[title="Create NodeHealthCheck", link=self, window=blank, width=100%]
-+
-Click create
 
-[start=3]
-.  Login into your bastion host with credentials provided to you by the lab administrator.
 +
-----
-ssh lab-user@<host> -p 32270
-----
+Click *Create*
 
-[start=4]
-. Using the credentials provided by the lab administrator, log in to the OpenShift CLI from your terminal on the bastion host. Be sure to substitute the placeholder password and cluster name with the specific values you were given.
 +
-[source,text,role=execute]
-.Login to OpenShift
-----
-oc login -u {openshift_cluster_admin_username} -p {openshift_cluster_admin_password} --server={openshift_api_server_url}
-----
-
-[start=5]
 . Next, locate the node hosting *fencing-vm1* located within the *fencing* project section and record this information. In this example, the node name is *worker-cluster-r2k68-1*.
+
 +
 [source,text,role=execute]
 .Get VM info
 ----
 oc get vmi -n fencing
 ----
-Output:
+
 +
 ----
 NAME          AGE    PHASE     IP            NODENAME                 READY
 fencing-vm1   169m   Running   10.235.0.29   worker-cluster-r2k68-1   True
 ----
 
-[start=6]
++
 . In the next steps, we will create a failure condition and monitor the effects on the OpenShift node.
 To monitor the process, open one additional terminal sessions and SSH into the bastion host as described above.
 
-
-[start=7]
++
 . In second terminal run a command to continually monitor the state of the worker node you found above (e.g. *worker-cluster-r2k68-1*, but your node name will be different).
+
 +
 [source,text,role=execute]
 .Monitor the worker nodes
@@ -71,9 +66,9 @@ To monitor the process, open one additional terminal sessions and SSH into the b
 oc get nodes <worker from step 5> -w
 ----
 
-
-[start=8]
++
 . Using the original terminal you created, you will force the worker from step 5 to go into an unhealthy state by stopping the kubelet service.
+
 +
 [source,text,role=execute]
 .Force the node into a unhealthy state
@@ -82,16 +77,16 @@ oc debug node/<worker from step 5>
 # chroot /host
 # systemctl stop kubelet
 ----
-Output:
+
 +
 ----
 Removing debug pod ...
 ----
 
-
-[start=9]
++
 . In your orginal terminal you opened, you will monitor the status of your virtual machine, *fencing-vm1*.
 Here you will see that self remediation is occurring on the node.
+
 +
 [source,text,role=execute]
 .Get VM info
@@ -99,16 +94,19 @@ Here you will see that self remediation is occurring on the node.
 oc get -n fencing vmi -w
 ----
 
-[start=10]
++
 . Navigate to Ecosystem → Installed Operators → Self Node Remediation Operator → Self Node Remediation
 Here you can see that self remediation is occurring on the node.
+
 +
 image::exercise6/06-image-nodehealthcheck4.png[title="Node remediation running", link=self, window=blank, width=100%]
 
-[start=11]
++
 . The VM will then proceed through scheduling and be scheduled onto a new node, where it will begin running. Concurrently, the original node will undergo remediation by the Self Node Remediation operator and be restored to a healthy state.
+
 +
 The node will be rebooted:
+
 +
 ----
 oc get nodes worker-cluster-r2k68-1 -w
@@ -125,8 +123,10 @@ worker-cluster-r2k68-1   Ready,SchedulingDisabled      worker   4h17m   v1.33.5
 worker-cluster-r2k68-1   Ready                         worker   4h18m   v1.33.5
 worker-cluster-r2k68-1   Ready                         worker   4h18m   v1.33.5
 ----
+
 +
 The VM will also be restarted on another node:
+
 +
 ----
 oc get -n fencing vmi -w

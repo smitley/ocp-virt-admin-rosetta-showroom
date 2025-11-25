@@ -36,7 +36,7 @@ include::lab-access.adoc[]
 [#decmlinstructions]
 == CLI Based Instructions
 
-. Ensure you are <<labaccess,logged in to the OpenShift Console as the *admin* user>> and continue to the next step.
+. Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
 
 +
 . Verify the source *VirtualMachineInstance* is running.
@@ -353,9 +353,11 @@ EOF
 
 [#decmlmonitor]
 == Monitor the Migration
-When the source *VirtualMachineInstanceMigration* above is created, the migration will start. You can monitor the migration through a few different lenses:
+When the source *VirtualMachineInstanceMigration* above is created, the migration will start. You can monitor the migration through the CLI or the Console.
 
-. *Using the CLI*
+Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
+
+. From the CLI
 
 +
 [.wrap,console,role=execute]
@@ -402,12 +404,9 @@ NAME                      AGE    STATUS      READY
 vm-migration-ns-ns-live   7m1s   Migrating   False
 ----
 
-+
-[start=2]
-. *Using the Console*
 
-+
-Login to the OpenShift console using the credentials provided to you by the lab administrator.
+[start=2]
+. From the Console
 
 +
 From the left hand menu, navigate to *Virtualization*, click *Virtual Machines*, followed by the namespace *vm-live-migration-source* to expand it and click on the virtual machine named *vm-migration-ns-ns-live*.
@@ -480,9 +479,9 @@ image::exercise7/image9-ui-dest-running-src-stopped.png[title="Destination Virtu
 The UI based workflow is not fully functional yet. The workflow is complete, but the migration will fail when the plan is created. The purpose of this section is to introduce you to the UI based workflow.
 =====
 
-Login to the OpenShift console using the credentials provided to you by the lab administrator.
+. Ensure you are <<labaccess,logged in to the OpenShift Console as the *admin* user>> from your *web browser* and continue to the next step.
 
-. From the left hand menu, navigate to *Migration for Virtualization* and click *Migration plans*.
+. From the Console left hand menu, navigate to *Migration for Virtualization* and click *Migration plans*.
 
 +
 image::exercise7/ui/image1-click-migration-plans.png[title="Migration Plans", link=self, window=blank, width=100%]
