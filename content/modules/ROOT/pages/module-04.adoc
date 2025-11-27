@@ -138,7 +138,7 @@ image::exercise4/04-image-affinity03.png[title="Node Affinity Rule", link=self, 
 image::exercise4/04-image-affinity03a.png[title="Node Affinity Rule", link=self, window=blank, width=100%]
 
 +
-. Now let's take a look at the Node Affinity rule on node-affinity-vm. You can do this by using the GUI and going to YAML on the pod-anti-affinity-vm or you can do it on the CLI.
+. Now let's take a look at the Node Affinity rule on node-affinity-vm. You can view this information either through the GUI by navigating to node-affinity-vm → YAML, or by using the CLI..
 
 +
 [source,text,role=execute]
