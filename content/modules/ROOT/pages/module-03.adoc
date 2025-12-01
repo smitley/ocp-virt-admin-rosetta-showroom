@@ -119,7 +119,7 @@ image::exercise3/03-image-disk-007.png[title="View the new disk from the OS", li
 .Get a list of pods
 [source,text,role=execute]
 ----
-oc get pods -n vmtest
+oc get pods -n hot-plug
 ----
 +
 .Output

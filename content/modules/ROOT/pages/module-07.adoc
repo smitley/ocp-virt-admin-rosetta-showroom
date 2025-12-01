@@ -231,7 +231,7 @@ Confirm the *VirtualMachine* and associated *VirtualMachineInstance* have been c
 +
 [.wrap,console,role=execute]
 ----
-oc get VirtualMachine
+oc get VirtualMachine -n vm-migration-ns-ns-live
 ----
 
 +
@@ -244,7 +244,7 @@ vm-migration-ns-ns-live   5m51s   WaitingForReceiver   False
 +
 [.wrap,console,role=execute]
 ----
-oc get VirtualMachineInstance
+oc get VirtualMachineInstance -n vm-migration-ns-ns-live
 ----
 
 +
@@ -276,7 +276,11 @@ spec:
   vmiName: vm-migration-ns-ns-live
 EOF
 ----
-
++
+[NOTE]
+=====
+The *migrationID* field in the YAML above does not necessarily refer to anything specific. You may use any unique text in that field.
+=====
 +
 Confirm the destination *VirtualMachineInstanceMigration* has been created by executing the following command:
 
@@ -391,7 +395,7 @@ vm-live-migration-destination   ns-to-ns-vm-live-migration-instance-destination 
 +
 [.wrap,console,role=execute]
 ----
-oc get vm
+oc get vm -n vm-migration-ns-ns-live
 ----
 
 +

@@ -338,7 +338,7 @@ image::exercise2/vm-memory-assigned.png[title="VM Memory Assigned", link=self, w
 +
 [,shell,role="execute wrap",subs="attributes"]
 ----
-oc get vm -v over-commit overcommit-vm-1 -o json | jq .spec.template.spec.domain.memory
+oc get vm -n over-commit overcommit-vm-1 -o json | jq .spec.template.spec.domain.memory
 ----
 
 +
