@@ -52,9 +52,9 @@ worker-cluster-pg8lt-3   Ready    worker   4h58m   v1.33.5
 .. Show available CPU resources on a specific node:
 
 +
-[,shell,role="execute wrap",subs="attributes"]
+[,text,role="execute wrap",subs="attributes"]
 ----
-oc describe node <node_name> | grep -A 10 "Capacity:"
+oc describe node &ltnode_name&gt | grep -A 10 "Capacity:"
 ----
 
 +
@@ -270,7 +270,7 @@ virt-launcher-overcommit-vm-1-rtspw   2/2     Running   0          47m
 +
 [,shell,role="execute wrap",subs="attributes"]
 ----
-oc get pod -n over-commit <pod_name> \
+oc get pod -n over-commit &ltpod_name&gt \
 -o jsonpath='{.spec.containers[?(@.name=="compute")].resources}{"\n"}' | jq
 ----
 
