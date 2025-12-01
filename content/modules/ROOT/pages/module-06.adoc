@@ -63,17 +63,17 @@ To monitor the process, open one additional terminal sessions and SSH into the b
 [source,text,role=execute]
 .Monitor the worker nodes
 ----
-oc get nodes <worker from step 5> -w
+oc get nodes <worker from step 4> -w
 ----
 
 +
-. Using the original terminal you created, you will force the worker from step 5 to go into an unhealthy state by stopping the kubelet service.
+. Using the original terminal you created, you will force the worker from step 4 to go into an unhealthy state by stopping the kubelet service.
 
 +
 [source,text,role=execute]
 .Force the node into a unhealthy state
 ----
-oc debug node/<worker from step 5>
+oc debug node/<worker from step 4>
 # chroot /host
 # systemctl stop kubelet
 ----
