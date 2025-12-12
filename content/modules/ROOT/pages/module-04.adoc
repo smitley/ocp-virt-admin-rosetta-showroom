@@ -45,7 +45,7 @@ oc get vmi node-affinity-vm
 +
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
-node-affinity-vm   78m   Running   10.235.0.25   worker-cluster-k66tl-1   True
+node-affinity-vm   78m   Running   10.235.0.25   worker-cluster-t96sv-1   True
 ----
 
 +
@@ -62,12 +62,12 @@ oc get nodes
 .Output
 ----
 NAME                            STATUS   ROLES                         AGE     VERSION
-control-plane-cluster-k66tl-1   Ready    control-plane,master,worker   4h38m   v1.33.5
-control-plane-cluster-k66tl-2   Ready    control-plane,master,worker   4h23m   v1.33.5
-control-plane-cluster-k66tl-3   Ready    control-plane,master,worker   4h37m   v1.33.5
-worker-cluster-k66tl-1          Ready    worker                        88m     v1.33.5
-worker-cluster-k66tl-2          Ready    worker                        87m     v1.33.5
-worker-cluster-k66tl-3          Ready    worker                        86m     v1.33.5
+control-plane-cluster-t96sv-1   Ready    control-plane,master,worker   4h38m   v1.33.5
+control-plane-cluster-t96sv-2   Ready    control-plane,master,worker   4h23m   v1.33.5
+control-plane-cluster-t96sv-3   Ready    control-plane,master,worker   4h37m   v1.33.5
+worker-cluster-t96sv-1          Ready    worker                        88m     v1.33.5
+worker-cluster-t96sv-2          Ready    worker                        87m     v1.33.5
+worker-cluster-t96sv-3          Ready    worker                        86m     v1.33.5
 ----
 
 +
@@ -80,7 +80,7 @@ oc label node <worker where node-affinity-vm is not running> zone=east
 +
 .Output
 ----
-node/worker-cluster-k66tl-3 labeled
+node/worker-cluster-t96sv-3 labeled
 ----
 
 +
@@ -170,7 +170,7 @@ oc get vmi node-affinity-vm
 +
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
-node-affinity-vm   58s   Running   10.233.2.20   worker-cluster-k66tl-3   True
+node-affinity-vm   58s   Running   10.233.2.20   worker-cluster-t96sv-3   True
 ----
 
 [#podaffinity]
@@ -272,10 +272,10 @@ spec:
 . To make the label get applied to the vmi of the node-affinity-vm. We will reboot it.
 
 +
-. Using the pod-affinity-vm VM, Click on Action → Stop.
+. Using the pod-affinity-vm VM, Click on *Action → Stop*.
 
 +
-. Once the VM completely stops. Click Actions → Start.
+. Once the VM completely stops. Click *Actions → Start*.
 
 +
 . Click the pod-affinity-vm  
@@ -352,10 +352,10 @@ oc get vmi node-affinity-vm
 . To make the vm follow these new affinity rules. You normally would migrate it to the node with the label. However, to show that this affinity rule is working. We are going to power off the vm completely and then power it back on. 
 
 +
-. Using the *pod-affinity-vm* VM, Click on *Action -> Stop*.
+. Using the *pod-affinity-vm* VM, Click on *Action → Stop*.
 
 +
-. Once the VM completely stops. Click *Actions -> Start*.
+. Once the VM completely stops. Click *Actions → Start*.
 
 +
 . See where the *pod-affinity-vm* and *node-affinity-vm* are running by looking at OpenShift Console or check on the OpenShift Command line. 
@@ -453,10 +453,10 @@ oc get vmi node-affinity-vm
 . To make the VM follow these new affinity rules. You normally would migrate it to the node with the label. However, to show that this affinity rule is working. We are going to power off the vm completely and then power it back on.
 
 +
-. On the *pod-anti-affinity-vm* virtual machine, Click *Action -> Stop*.
+. On the *pod-anti-affinity-vm* virtual machine, Click *Action → Stop*.
 
 +
-. Once the VM completely stops. Click *Actions -> Start*.
+. Once the VM completely stops. Click *Actions → Start*.
 
 +
 . See where the *pod-affinity-vm* and *pod-anti-affinity-vm* are running by looking at OpenShift Console or check on the OpenShift Command line. 
