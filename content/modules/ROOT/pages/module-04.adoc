@@ -192,45 +192,7 @@ This lab will illustrate the setup and function of Pod Affinity.
 
 +
 [source,text,role=execute]
-.Modify the VMI
-----
-oc edit vmi node-affinity-vm -n affinity
-----
-
-+
-[source,yaml,role=execute]
-----
-apiVersion: kubevirt.io/v1
-kind: VirtualMachineInstance
-metadata:
-  annotations:
-    kubevirt.io/latest-observed-api-version: v1
-    kubevirt.io/storage-observed-api-version: v1
-    kubevirt.io/vm-generation: "3"
-    vm.kubevirt.io/flavor: small
-    vm.kubevirt.io/os: rhel9
-    vm.kubevirt.io/workload: server
-  creationTimestamp: "2025-11-13T13:25:16Z"
-  finalizers:
-  - kubevirt.io/virtualMachineControllerFinalize
-  - foregroundDeleteVirtualMachine
-  generation: 13
-  labels:
-    app: fedora   ←—- Put label here
-    kubevirt.io/domain: node-affinity-vm
-    kubevirt.io/nodeName: worker-cluster-t96sv-1
-    kubevirt.io/size: small
-    network.kubevirt.io/headlessService: headless
-----
-
-+
-[source,text,role=execute]
-----
-:wq!
-----
-
-+
-[source,text,role=execute]
+.Modify the VM
 ----
 oc edit vm node-affinity-vm -n affinity
 ----
@@ -259,7 +221,7 @@ metadata:
   - kubevirt.io/virtualMachineControllerFinalize
   generation: 3
   labels:
-    app: node-affinity-vm  ←-- Do not put the label here
+    app: node-affinity-vm  ← Do not put the label here
     kubevirt.io/dynamic-credentials-support: "true"
     podaffinity: ""
     vm.kubevirt.io/template: rhel9-server-small
@@ -295,7 +257,7 @@ spec:
         vm.kubevirt.io/workload: server
       creationTimestamp: null
       labels:
-        app: fedora  ←—- Put label here
+        app: fedora  ← Put label here
         kubevirt.io/domain: node-affinity-vm
         kubevirt.io/size: small
         network.kubevirt.io/headlessService: headless
@@ -305,6 +267,15 @@ spec:
 ----
 :wq!
 ----
+
++
+. To make the label get applied to the vmi of the node-affinity-vm. We will reboot it.
+
++
+. Using the pod-affinity-vm VM, Click on Action → Stop.
+
++
+. Once the VM completely stops. Click Actions → Start.
 
 +
 . Click the pod-affinity-vm  
