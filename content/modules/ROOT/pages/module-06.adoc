@@ -95,7 +95,7 @@ oc get -n fencing vmi -w
 ----
 
 +
-. Navigate to Ecosystem → Installed Operators → Self Node Remediation Operator → Self Node Remediation
+. Navigate to *Ecosystem → Installed Operators → Self Node Remediation Operator → Self Node Remediation*
 Here you can see that self remediation is occurring on the node.
 
 +
