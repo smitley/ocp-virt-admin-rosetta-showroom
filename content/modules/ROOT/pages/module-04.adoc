@@ -84,7 +84,7 @@ node/worker-cluster-t96sv-3 labeled
 ----
 
 +
-Alternatively you can use the OpenShift Console by going to Compute → Nodes and then pick a node where *node-affinity-vm* is not running. Then click the 3 dots and click *Edit labels*. Once finished adding the label click *Save*.
+Alternatively you can use the OpenShift Console by going to *Compute → Nodes* and then pick a node where *node-affinity-vm* is not running. Then click the 3 dots and click *Edit labels*. Once finished adding the label click *Save*.
 
 +
 image::exercise4/04-image-affinity.png[title="Label Nodes", link=self, window=blank, width=100%]
@@ -122,7 +122,7 @@ image::exercise4/04-image-affinity02a.png[title="Node Affinity add rule", link=s
 
 +
 . Change the *Condition* to *Preferred during scheduling* and set the *weight* to *75*.
-Then, under *Node Labels* click *Add Expression*. Set the *Key* field to *zone* and the *Values* field to *east*, which is the label applied to the node earler. Your Final Node Affinity rule will look like the picture below. Confirm this is true and click *Save affinity rule*.
+Then, under *Node Labels* click *Add Expression*. Set the *Key* field to `zone` and the *Values* field to `east` and click *add*. These are the same label applied to the node earler. Your Final Node Affinity rule will look like the picture below. Confirm this is true and click *Save affinity rule*.
 
 +
 image::exercise4/04-image-affinity03.png[title="Node Affinity Rule", link=self, window=blank, width=100%]
@@ -203,63 +203,49 @@ apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   annotations:
-    kubemacpool.io/transaction-timestamp: "2025-11-12T05:17:34.117234412Z"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "10"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"kubevirt.io/v1","kind":"VirtualMachine","metadata":{"annotations":{"argocd.argoproj.io/sync-options":"SkipDryRunOnMissingResource=true","argocd.argoproj.io/sync-wave":"10"},"labels":{"app.kubernetes.io/instance":"module-affinity"},"name":"node-affinity-vm","namespace":"affinity"},"spec":{"dataVolumeTemplates":[{"metadata":{"name":"node-affinity-vm-volume"},"spec":{"sourceRef":{"kind":"DataSource","name":"rhel10","namespace":"openshift-virtualization-os-images"},"storage":{"resources":{"requests":{"storage":"30Gi"}}}}}],"instancetype":{"name":"u1.small"},"preference":{"name":"rhel.10"},"runStrategy":"Manual","template":{"metadata":{"labels":{"network.kubevirt.io/headlessService":"headless"}},"spec":{"domain":{"devices":{"autoattachPodInterface":false,"disks":[{"disk":{"bus":"virtio"},"name":"cloudinitdisk"}],"interfaces":[{"masquerade":{},"name":"default"}]}},"networks":[{"name":"default","pod":{}}],"subdomain":"headless","volumes":[{"dataVolume":{"name":"node-affinity-vm-volume"},"name":"rootdisk"},{"cloudInitNoCloud":{"userData":"#cloud-config\nchpasswd:\n  expire: false\npassword: redhat\nuser: rhel\n"},"name":"cloudinitdisk"}]}}}}
+    kubemacpool.io/transaction-timestamp: "2025-12-13T00:21:52.599027397Z"
     kubevirt.io/latest-observed-api-version: v1
     kubevirt.io/storage-observed-api-version: v1
-    vm.kubevirt.io/validations: |
-      [
-        {
-          "name": "minimal-required-memory",
-          "path": "jsonpath::.spec.domain.memory.guest",
-          "rule": "integer",
-          "message": "This VM requires more memory.",
-          "min": 1610612736
-        }
-      ]
-  creationTimestamp: "2025-11-12T02:02:05Z"
+  creationTimestamp: "2025-12-12T20:44:59Z"
   finalizers:
   - kubevirt.io/virtualMachineControllerFinalize
-  generation: 3
+  generation: 2
   labels:
-    app: node-affinity-vm  ← Do not put the label here
-    kubevirt.io/dynamic-credentials-support: "true"
-    podaffinity: ""
-    vm.kubevirt.io/template: rhel9-server-small
-    vm.kubevirt.io/template.namespace: openshift
-    vm.kubevirt.io/template.revision: "1"
-    vm.kubevirt.io/template.version: v0.34.1
+    app.kubernetes.io/instance: module-affinity  <--- Do not put the label here
   name: node-affinity-vm
   namespace: affinity
-  resourceVersion: "1485819"
-  uid: 20136774-16cb-46e5-8cb4-417de1712da6
+  resourceVersion: "328565"
+  uid: 6e05ce41-019f-498a-a07f-ef4e9c93ddd3
 spec:
   dataVolumeTemplates:
-  - apiVersion: cdi.kubevirt.io/v1beta1
-    kind: DataVolume
-    metadata:
+  - metadata:
       creationTimestamp: null
-      name: node-affinity-vm
+      name: node-affinity-vm-volume
     spec:
       sourceRef:
         kind: DataSource
-        name: rhel9
+        name: rhel10
         namespace: openshift-virtualization-os-images
       storage:
         resources:
           requests:
             storage: 30Gi
-  runStrategy: RerunOnFailure
+  instancetype:
+    kind: virtualmachineclusterinstancetype
+    name: u1.small
+  preference:
+    kind: virtualmachineclusterpreference
+    name: rhel.10
+  runStrategy: Manual
   template:
     metadata:
-      annotations:
-        vm.kubevirt.io/flavor: small
-        vm.kubevirt.io/os: rhel9
-        vm.kubevirt.io/workload: server
       creationTimestamp: null
       labels:
-        app: fedora  ← Put label here
-        kubevirt.io/domain: node-affinity-vm
-        kubevirt.io/size: small
+        app: fedora   <--- Put the label here
         network.kubevirt.io/headlessService: headless
 ----
 +
@@ -315,7 +301,7 @@ image::exercise4/04-image-affinity04.png[title="Pod Affinity Rule", link=self, w
 . Click *Add expression* under *Workload labels*.
 
 +
-. You will now set a key so this VM will run on the same node as *node-affinity-vm*. Set the *Key* field to `app` and the *Values* field to `fedora`. Your Final Pod Affinity rule will look like the picture below. Confirm this is true and click *Save affinity rule*.
+. You will now set a key so this VM will run on the same node as *node-affinity-vm*. Set the *Key* field to `app` and the *Values* field to `fedora` and click *add*. Your Final Pod Affinity rule will look like the picture below. Confirm this is true and click *Save affinity rule*.
 
 +
 image::exercise4/04-image-affinity05.png[title="Pod Affinity Rule", link=self, window=blank, width=100%]
@@ -417,7 +403,7 @@ image::exercise4/04-image-affinity06.png[title="Add Pod Anti-Affinity Rule", lin
 . Click *Add expression* under *Workload labels*
 
 +
-. Next, we will set a *key* and *value* to establish Pod Anti-affinity, ensuring this VM runs on a different node than *pod-affinity-vm*. Set the *key* to `app` and the *value* to `fedora`. The resulting Pod Affinity rule should match the illustration provided below. Verify the rule's correctness, then click Save affinity rule.
+. Next, we will set a *key* and *value* to establish Pod Anti-affinity, ensuring this VM runs on a different node than *pod-affinity-vm*. Set the *key* to `app` and the *value* to `fedora` and click *add*. The resulting Pod Affinity rule should match the illustration provided below. Verify the rule's correctness, then click Save affinity rule.
 
 +
 image::exercise4/04-image-affinity07.png[title="Add Pod Anti-Affinity Rule", link=self, window=blank, width=100%]
@@ -465,8 +451,8 @@ oc get vmi node-affinity-vm
 [source,text,role=execute]
 ----
 oc get vmi pod-anti-affinity-vm
-oc get vmi pod-affinity-vm
+oc get vmi node-affinity-vm
 ----
 
 +
-. The *pod-anti-affinity-vm* VM will now be running on a different node than *pod-affinity-vm*. If *pod-anti-affinity-vm* was not already running on a different node than the *pod-affinity-vm*. 
+. The *pod-anti-affinity-vm* VM will now be running on a different node than *node-affinity-vm*. If *pod-anti-affinity-vm* was not already running on a different node than the *node-affinity-vm*. 
