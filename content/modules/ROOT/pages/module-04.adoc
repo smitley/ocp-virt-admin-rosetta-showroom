@@ -424,7 +424,7 @@ oc get vm pod-anti-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.aff
 ----
 
 +
-. See where the pod-affinity-vm and node-affinity-vm are running by looking at OpenShift Console or check on the OpenShift Command line. 
+. See where the *pod-anti-affinity-vm* and *node-affinity-vm* are running by looking at OpenShift Console or check on the OpenShift Command line. 
 
 +
 [source,text,role=execute]
@@ -443,7 +443,7 @@ oc get vmi node-affinity-vm
 . Once the VM completely stops. Click *Actions → Start*.
 
 +
-. See where the *pod-affinity-vm* and *pod-anti-affinity-vm* are running by looking at OpenShift Console or check on the OpenShift Command line. 
+. See where the *pod-anti-affinity-vm* and *node-affinity-vm* are running by looking at OpenShift Console or check on the OpenShift Command line. 
 
 +
 [source,text,role=execute]
