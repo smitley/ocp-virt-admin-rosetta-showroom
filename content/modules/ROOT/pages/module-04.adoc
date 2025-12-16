@@ -31,6 +31,7 @@ oc project affinity
 
 +
 [.wrap,console,subs="attributes"]
+.Output
 ----
 Now using project "affinity" on server {openshift_api_server_url}.
 ----
@@ -43,6 +44,7 @@ oc get vmi node-affinity-vm
 ----
 
 +
+.Output
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
 node-affinity-vm   78m   Running   10.235.0.25   worker-cluster-t96sv-3   True
@@ -144,6 +146,7 @@ oc get vm node-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinit
 ----
 
 +
+.Output
 ----
 {"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"preference":{"matchExpressions":[{"key":"zone","operator":"In","values":["east"]}]},"weight":75}]}}
 ----
@@ -168,6 +171,7 @@ oc get vmi node-affinity-vm -n affinity
 ---- 
 
 +
+.Output
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
 node-affinity-vm   58s   Running   10.233.2.20   worker-cluster-t96sv-2   True
@@ -309,6 +313,7 @@ oc get vm pod-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity
 ---- 
 
 +
+.Output
 ----
 {"podAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"app","operator":"In","values":["fedora"]}]},"topologyKey":"kubernetes.io/hostname"}]}}
 ----
@@ -323,6 +328,8 @@ oc get vmi pod-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
 ----
 
++
+.Output
 ----
 NAME              AGE   PHASE     IP            NODENAME                 READY
 pod-affinity-vm   70m   Running   10.235.0.54   worker-cluster-t96sv-3   True
@@ -349,6 +356,8 @@ oc get vmi pod-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
 ----
 
++
+.Output
 ----
 NAME              AGE   PHASE     IP            NODENAME                 READY
 pod-affinity-vm   70m   Running   10.235.0.54   worker-cluster-t96sv-2   True
@@ -422,7 +431,9 @@ image::exercise4/04-image-affinity07.png[title="Add Pod Anti-Affinity Rule", lin
 ----
 oc get vm pod-anti-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity}{"\n"}'
 ----
+
 +
+.Output
 ----
 {"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"app","operator":"In","values":["fedora"]}]},"topologyKey":"kubernetes.io/hostname"}]}}
 ----
@@ -437,6 +448,8 @@ oc get vmi pod-anti-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
 ----
 
++
+.Output
 ----
 NAME                   AGE   PHASE     IP            NODENAME                 READY
 pod-anti-affinity-vm   79m   Running   10.233.0.44   worker-cluster-t96sv-2   True
@@ -463,6 +476,8 @@ oc get vmi pod-anti-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
 ----
 
++
+.Output
 ----
 NAME                   AGE   PHASE     IP            NODENAME                 READY
 pod-anti-affinity-vm   79m   Running   10.233.0.44   worker-cluster-t96sv-3   True
