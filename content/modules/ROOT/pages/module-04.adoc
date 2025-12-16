@@ -96,7 +96,7 @@ image::exercise4/04-image-affinity.png[title="Label Nodes", link=self, window=bl
 
 +
 [source,text,role=execute]
-.Find node with the assigned label
+.Find label
 ----
 oc get nodes <worker you just labeled> --show-labels | grep -i zone=east
 ----
