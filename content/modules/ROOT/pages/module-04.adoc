@@ -45,11 +45,11 @@ oc get vmi node-affinity-vm
 +
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
-node-affinity-vm   78m   Running   10.235.0.25   worker-cluster-t96sv-1   True
+node-affinity-vm   78m   Running   10.235.0.25   worker-cluster-t96sv-3   True
 ----
 
 +
-. Set an east node label on any worker where the *node-affinity-vm* is currently not running.
+. Set a label `zone=east` on any worker where the *node-affinity-vm* is currently not running.
 
 +
 [source,text,role=execute]
@@ -80,7 +80,7 @@ oc label node <worker where node-affinity-vm is not running> zone=east
 +
 .Output
 ----
-node/worker-cluster-t96sv-3 labeled
+node/worker-cluster-t96sv-2 labeled
 ----
 
 +
@@ -140,7 +140,7 @@ image::exercise4/04-image-affinity03a.png[title="Node Affinity Rule", link=self,
 [source,text,role=execute]
 .View the VM definition
 ----
-oc get vm node-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity}'
+oc get vm node-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity}{"\n"}'
 ----
 
 +
@@ -149,20 +149,10 @@ oc get vm node-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinit
 ----
 
 +
-. Before we make *node-affinity-vm* move because of our new Node Affinity rule. Let's check its current location by looking at OpenShift Console and navigating to *Virtualization →  VirtualMachines → affinity* or by checking on the OpenShift Command line.
-
-+
-[source,text,role=execute]
-.Get VM information
-----
-oc get vmi node-affinity-vm -n affinity
-----
-
-+
 . To make the VM follow these new Node Affinity rules, you could migrate it to the node with the label. However, to show that this Node Affinity rule is working we are going to power off the VM completely and then power it back on. 
 
 +
-. Using the *node-affinity-vm* VM, Click on *Action → Stop*.
+. Stop the the *node-affinity-vm* by clicking on *Action → Stop*.
 
 +
 . Once the VM completely stops. Click *Actions → Start*.
@@ -180,7 +170,7 @@ oc get vmi node-affinity-vm -n affinity
 +
 ----
 NAME               AGE   PHASE     IP            NODENAME                 READY
-node-affinity-vm   58s   Running   10.233.2.20   worker-cluster-t96sv-3   True
+node-affinity-vm   58s   Running   10.233.2.20   worker-cluster-t96sv-2   True
 ----
 
 [#podaffinity]
@@ -265,10 +255,10 @@ spec:
 ----
 
 +
-. To make the label get applied to the vmi of the *node-affinity-vm*. We will reboot it.
+. A reboot is required for the *node-affinity-vm* in order to apply the label to its vmi.
 
 +
-. Using the *node-affinity-vm* VM, Click on *Action → Stop*.
+. Stop the *node-affinity-vm* VM by clicking on *Action → Stop*.
 
 +
 . Once the VM completely stops. Click *Actions → Start*.
@@ -315,7 +305,7 @@ image::exercise4/04-image-affinity05.png[title="Pod Affinity Rule", link=self, w
 +
 [source,text,role=execute]
 ----
-oc get vm pod-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity}'
+oc get vm pod-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity}{"\n"}'
 ---- 
 
 +
@@ -333,11 +323,18 @@ oc get vmi pod-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
 ----
 
+----
+NAME              AGE   PHASE     IP            NODENAME                 READY
+pod-affinity-vm   70m   Running   10.235.0.54   worker-cluster-t96sv-3   True
+NAME               AGE     PHASE     IP            NODENAME                 READY
+node-affinity-vm   3m33s   Running   10.233.0.46   worker-cluster-t96sv-2   True
+----
+
 +
 . To make the vm follow these new Pod Affinity rules. You normally would migrate it to the node with the label. However, to show that this Pod Affinity rule is working. We are going to power off the vm completely and then power it back on. 
 
 +
-. Using the *pod-affinity-vm* VM, Click on *Action → Stop*.
+. Stop the *pod-affinity-vm* VM by clicking on *Action → Stop*.
 
 +
 . Once the VM completely stops. Click *Actions → Start*.
@@ -350,6 +347,13 @@ oc get vmi node-affinity-vm -n affinity
 ----
 oc get vmi pod-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
+----
+
+----
+NAME              AGE   PHASE     IP            NODENAME                 READY
+pod-affinity-vm   70m   Running   10.235.0.54   worker-cluster-t96sv-2   True
+NAME               AGE     PHASE     IP            NODENAME                 READY
+node-affinity-vm   3m33s   Running   10.233.0.46   worker-cluster-t96sv-2   True
 ----
 
 +
@@ -402,7 +406,7 @@ image::exercise4/04-image-affinity06.png[title="Add Pod Anti-Affinity Rule", lin
 . Click *Add expression* under *Workload labels*
 
 +
-. Next, we will set a *key* and *value* to establish Pod Anti-Affinity, ensuring this VM runs on a different node than *node-affinity-vm*. Set the *key* to `app` and the *value* to `fedora` and click *add*. The resulting Pod Affinity rule should match the illustration provided below. Verify the rule's correctness, then click Save affinity rule.
+. Next, we will set a *key* and *value* to establish Pod Anti-Affinity, ensuring this VM runs on a different node than *node-affinity-vm*. Set the *key* to `app` and the *value* to `fedora` and click *add*. The resulting Pod Affinity rule should match the illustration provided below. Verify the rule's correctness, then click *Save affinity rule*.
 
 +
 image::exercise4/04-image-affinity07.png[title="Add Pod Anti-Affinity Rule", link=self, window=blank, width=100%]
@@ -416,7 +420,7 @@ image::exercise4/04-image-affinity07.png[title="Add Pod Anti-Affinity Rule", lin
 +
 [source,text,role=execute]
 ----
-oc get vm pod-anti-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity}'
+oc get vm pod-anti-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity}{"\n"}'
 ----
 +
 ----
@@ -433,11 +437,18 @@ oc get vmi pod-anti-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
 ----
 
+----
+NAME                   AGE   PHASE     IP            NODENAME                 READY
+pod-anti-affinity-vm   79m   Running   10.233.0.44   worker-cluster-t96sv-2   True
+NAME               AGE   PHASE     IP            NODENAME                 READY
+node-affinity-vm   13m   Running   10.233.0.46   worker-cluster-t96sv-2   True
+----
+
 +
 . To make the VM follow these new Pod Anti-Affinity rules. You normally would migrate it to the node with the label. However, to show that this Pod Anti-Affinity rule is working. We are going to power off the vm completely and then power it back on.
 
 +
-. On the *pod-anti-affinity-vm* virtual machine, Click *Action → Stop*.
+. Stop the *pod-anti-affinity-vm* VM by Clicking *Action → Stop*.
 
 +
 . Once the VM completely stops. Click *Actions → Start*.
@@ -450,6 +461,13 @@ oc get vmi node-affinity-vm -n affinity
 ----
 oc get vmi pod-anti-affinity-vm -n affinity
 oc get vmi node-affinity-vm -n affinity
+----
+
+----
+NAME                   AGE   PHASE     IP            NODENAME                 READY
+pod-anti-affinity-vm   79m   Running   10.233.0.44   worker-cluster-t96sv-3   True
+NAME               AGE   PHASE     IP            NODENAME                 READY
+node-affinity-vm   13m   Running   10.233.0.46   worker-cluster-t96sv-2   True
 ----
 
 +
