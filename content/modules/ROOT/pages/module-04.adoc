@@ -338,7 +338,7 @@ node-affinity-vm   3m33s   Running   10.233.0.46   worker-cluster-t96sv-2   True
 ----
 
 +
-. To make the vm follow these new Pod Affinity rules. You normally would migrate it to the node with the label. However, to show that this Pod Affinity rule is working. We are going to power off the vm completely and then power it back on. 
+. To make the VM follow these new Pod Affinity rules. You normally would migrate it to the node with the label. However, to show that this Pod Affinity rule is working. We are going to power off the vm completely and then power it back on. 
 
 +
 . Stop the *pod-affinity-vm* VM by clicking on *Action → Stop*.
