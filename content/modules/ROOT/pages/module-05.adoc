@@ -65,7 +65,7 @@ oc -n openshift-kube-descheduler-operator get kubedescheduler cluster -o yaml
 ----
 
 +
-[source,console,role="wrap",subs="attributes"]
+[source,yaml,role="wrap",subs="attributes"]
 ----
 apiVersion: operator.openshift.io/v1
 kind: KubeDescheduler

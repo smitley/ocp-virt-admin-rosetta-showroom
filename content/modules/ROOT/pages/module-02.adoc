@@ -43,10 +43,10 @@ oc get nodes -l node-role.kubernetes.io/worker=
 [,shell,role=wrap,subs="attributes"]
 .Output
 ----
-NAME                     STATUS   ROLES    AGE     VERSION
-worker-cluster-pg8lt-1   Ready    worker   4h59m   v1.33.5
-worker-cluster-pg8lt-2   Ready    worker   4h58m   v1.33.5
-worker-cluster-pg8lt-3   Ready    worker   4h58m   v1.33.5
+NAME                            STATUS   ROLES                         AGE   VERSION
+control-plane-cluster-jlkcx-1   Ready    control-plane,master,worker   21h   v1.33.6
+worker-cluster-jlkcx-1          Ready    worker                        52m   v1.33.6
+worker-cluster-jlkcx-2          Ready    worker                        52m   v1.33.6
 ----
 
 .. Show available CPU resources on a specific node:
@@ -54,7 +54,8 @@ worker-cluster-pg8lt-3   Ready    worker   4h58m   v1.33.5
 +
 [,text,role="execute wrap",subs="attributes"]
 ----
-oc describe node &ltnode_name&gt | grep -A 10 "Capacity:"
+NODE=worker-cluster-jlkcx-1
+oc describe node $NODE | grep -A 10 "Capacity:"
 ----
 
 +
@@ -62,14 +63,14 @@ oc describe node &ltnode_name&gt | grep -A 10 "Capacity:"
 .Output
 ----
 Capacity:
-  cpu:                            16
+  cpu:                            8
   devices.kubevirt.io/kvm:        1k
   devices.kubevirt.io/tun:        1k
   devices.kubevirt.io/vhost-net:  1k
   ephemeral-storage:              104266732Ki
   hugepages-1Gi:                  0
   hugepages-2Mi:                  0
-  memory:                         65836964Ki
+  memory:                         24600612Ki
   pods:                           250
 ----
 
@@ -80,14 +81,14 @@ The `cpu` value shows the number of physical CPU cores (or threads if hyperthrea
 +
 [,shell,role="execute wrap",subs="attributes"]
 ----
-oc get node "node_name" -o jsonpath='{.status.allocatable.cpu}{"\n"}'
+oc get node $NODE -o jsonpath='{.status.allocatable.cpu}{"\n"}'
 ----
 
 +
 [,shell,role=wrap,subs="attributes"]
 .Output
 ----
-15500m
+7500m
 ----
 
 +
@@ -118,7 +119,7 @@ STATUS:.status.printableStatus
 .Output
 ----
 NAMESPACE     NAME              vCPUs   STATUS
-over-commit   overcommit-vm-1   24      Running
+over-commit   overcommit-vm-1   16      Stopped
 ----
 
 .. For a specific VM, check the vCPU configuration:
@@ -133,11 +134,16 @@ oc get vm overcommit-vm-1 -n over-commit -o jsonpath='{.spec.template.spec.domai
 [,shell,role=wrap,subs="attributes"]
 .Output
 ----
-24
+16
 ----
 
++ 
+.. Start the overcommit-vm-1 Virtual Machine
 +
-.. View CPU requests and limits for a running VM:
+image::exercise2/start-vm.png[title="Start VM", link=self, window=blank, width=100%]
+
++
+.. View CPU requests and limits for the running VM:
 
 +
 [,shell,role="execute wrap",subs="attributes"]
@@ -149,7 +155,7 @@ oc get vmi overcommit-vm-1 -n over-commit -o jsonpath='{.spec.domain.cpu}{"\n"}'
 [,shell,role=wrap,subs="attributes"]
 .Output
 ----
-{"cores":24,"maxSockets":8,"model":"host-model","sockets":2,"threads":1}
+{"cores":16,"maxSockets":8,"model":"EPYC","sockets":2,"threads":1}
 ----
 
 +
@@ -177,7 +183,7 @@ nproc
 [,shell,role=wrap,subs="attributes"]
 .Output
 ----
-48
+32
 ----
 
 +
@@ -204,8 +210,8 @@ oc get vmi -A -o wide | grep "$NODE"
 [,shell,role=wrap,subs="attributes"]
 .Output
 ----
-affinity           pod-anti-affinity-vm    4h19m   Running   10.133.2.11   worker-cluster-pg8lt-3   True    True
-over-commit        overcommit-vm-1         47m     Running   10.133.2.25   worker-cluster-pg8lt-3   True    True
+affinity           pod-anti-affinity-vm    4h19m   Running   10.133.2.11   worker-cluster-jlkcx-1  True    True
+over-commit        overcommit-vm-1         47m     Running   10.133.2.25   worker-cluster-jlkcx-1   True    True
 ----
 
 +
@@ -228,7 +234,7 @@ jq -s 'map(.total_vcpus) | add'
 [,text,role=wrap,subs="attributes"]
 .Output
 ----
-48
+32
 ----
 
 +
@@ -240,9 +246,9 @@ jq -s 'map(.total_vcpus) | add'
 Overcommit Ratio = Total vCPUs allocated / Physical CPU cores
 
 Example:
-- Physical CPU cores: 16 (Available capacity from step 3.b)
-- Total vCPUs allocated: 48
-- Overcommit ratio: 48 / 16 = 3:1
+- Physical CPU cores: 8 (Available capacity from step 3.b)
+- Total vCPUs allocated: 32
+- Overcommit ratio: 32 / 8 = 4:1
 ----
 
 +
@@ -270,8 +276,8 @@ virt-launcher-overcommit-vm-1-rtspw   2/2     Running   0          47m
 +
 [,shell,role="execute wrap",subs="attributes"]
 ----
-oc get pod -n over-commit &ltpod_name&gt \
--o jsonpath='{.spec.containers[?(@.name=="compute")].resources}{"\n"}' | jq
+oc get pods -n over-commit -l vm.kubevirt.io/name=overcommit-vm-1 \
+-o jsonpath='{.items[0].spec.containers[?(@.name=="compute")].resources}{"\n"}' | jq
 ----
 
 +
@@ -285,12 +291,12 @@ oc get pod -n over-commit &ltpod_name&gt \
     "devices.kubevirt.io/vhost-net": "1"
   },
   "requests": {
-    "cpu": "4800m",
+    "cpu": "3200m",
     "devices.kubevirt.io/kvm": "1",
     "devices.kubevirt.io/tun": "1",
     "devices.kubevirt.io/vhost-net": "1",
     "ephemeral-storage": "50M",
-    "memory": "2696Mi"
+    "memory": "2564Mi"
   }
 }
 ----
@@ -303,7 +309,7 @@ Navigate to Workloads → Pods and select the virt-launcher pod.
 image::exercise2/pod-cpu-details.png[title="Confirm number of CPUs", link=self, window=blank, width=100%]
 
 +
-IMPORTANT: **A VM with 48 vCPUs only requests `4800m` (0.1 * 48 = 4.8 CPU) by default!**
+IMPORTANT: **A VM with 32 vCPUs only requests `3200m` (0.1 * 32 = 3.2 CPU) by default!**
 
 [#memory]
 == Memory Overcommit
@@ -317,9 +323,14 @@ Refer to the https://docs.redhat.com/en/documentation/openshift_container_platfo
 
 NOTE: We won't configure the wasp-agent component with real swap backend in this lab.
 
+IMPORTANT:  wasp-agent will be replaced by the native kubernetes based SWAP starting 4.21.
+
 The *memoryOvercommitPercentage* parameter tells CNV how to scale the memory request that is made for each VM created. So when set to 100, CNV calculates its memory request based on the full declared memory size of the VM; when it's set to a higher value, CNV sets the request to a smaller value than that actually required by the VM, allowing overcommitting of memory. 
 
-For example, with a VM with 16 GiB configured, if the overcommit percentage is set to its default value of 100, the memory request that CNV will apply to the pod is 16 GiB plus some extra for the overhead of the QEMU process running the VM. If it's set to 200, the request will be set to 8 GiB plus the overhead.
+For example, with a VM with 16 GiB configured, if the overcommit percentage is set to its default value of 100, the memory request that CNV will apply to the pod is 16 GiB plus some extra for the overhead of the QEMU process running the VM.
+If it's set to 200, the request will be set to 8 GiB plus the overhead.
+
+Memory overhead per virtual machine ≈ (0.002 × requested memory) + 218 MiB + 8 MiB × (number of vCPUs) + 16 MiB × (number of graphics devices) + (additional memory overhead)
 
 [#memoryinstructions]
 === Instructions
@@ -358,18 +369,20 @@ image::exercise2/virt-launcher-memory-request.png[title="Virt-Launcher Memory Re
 +
 [,shell,role="execute wrap",subs="attributes"]
 ----
-oc get pod -n over-commit -l vm.kubevirt.io/name=overcommit-vm-1 -o json | jq .items[0].spec.containers[0].resources.requests.memory
+oc get pod -n over-commit -l vm.kubevirt.io/name=overcommit-vm-1 -o json | jq '.items[0].spec.containers[0].resources.requests.memory'
 ----
 
 +
 [,text,role=wrap,subs="attributes"]
 .Output
 ----
-"2696Mi"
+"2564Mi"
 ----
 
 +
-NOTE: The virt-launcher pod is requesting 2696Mi which is 2048Mi + some **overhead**.
+NOTE: The virt-launcher pod is requesting 2564Mi which is 2048Mi + **overhead**.
+
+
 
 +
 IMPORTANT: This overhead is necessary and expected - it ensures the VM has enough resources to run properly.
@@ -412,7 +425,7 @@ Live Migrate the VM (or stop and restart it) to apply the new setting, then obse
 image::exercise2/virt-launcher-memory-request-overcommit.png[title="Virt-Launcher Memory Request 1.5x", link=self, window=blank, width=100%]
 
 +
-The virt-launcher pod is requesting _2109734912_ bytes which is ~ _2011Mi_  ~ _1.96GiB_.
+The virt-launcher pod is requesting _1972720981_ bytes which is ~ _1972Mi_  ~ _1.97GiB_.
 
 +
 NOTE: This is less than the _2048MiB_ requested by the VM. This is because the memory overcommit ratio is _150%_.
@@ -458,18 +471,18 @@ NOTE: This means that the memory overcommit ratio is now _200%_ which is _2:1_.
 +
 [,shell,role="execute wrap",subs="attributes"]
 ----
-oc get pod -l vm.kubevirt.io/name=overcommit-vm-1 -o json | jq .items[0].spec.containers[0].resources.requests.memory
+oc get pod -n over-commit -l vm.kubevirt.io/name=overcommit-vm-1 -o json | jq '.items[0].spec.containers[0].resources.requests.memory'
 ----
 
 +
 [,text,role=wrap,subs="attributes"]
 .Output
 ----
-"1670Mi"
+"1540Mi"
 ----
 
 +
-NOTE: The virt-launcher pod is now requesting _1670Mi_ which is ~ _1.6GiB_.
+NOTE: The virt-launcher pod is now requesting _1540Mi_ which is ~ _1.54GiB_.
 
 +
 
