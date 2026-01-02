@@ -205,27 +205,28 @@ I0102 14:53:47.976924       1 nodeutilization.go:200] "Pods on node" node="worke
 I0102 14:53:47.976946       1 nodeutilization.go:216] "Evicting pods based on priority, if they have same priority, they'll be evicted based on QoS tiers"
 I0102 14:53:47.977036       1 profile.go:376] "Total number of evictions/requests" extension point="Balance" evictedPods=0 evictionRequests=0
 I0102 14:53:47.977065       1 descheduler.go:403] "Number of evictions/requests" totalEvicted=0 evictionRequests=0
-I0102 14:53:52.963035       1 lownodeutilization.go:210] "Node has been classified" category="underutilized" node="control-plane-cluster-jlkcx-1" usage={"MetricResource":"10"} usagePercentage={"MetricResource":10}
+I0102 14:53:52.963035       1 lownodeutilization.go:210] "Node has been classified" category="overutilized" node="control-plane-cluster-jlkcx-1" usage={"MetricResource":"10"} usagePercentage={"MetricResource":10}
 I0102 14:53:52.963113       1 lownodeutilization.go:210] "Node has been classified" category="underutilized" node="worker-cluster-jlkcx-1" usage={"MetricResource":"7"} usagePercentage={"MetricResource":7}
-I0102 14:53:52.963143       1 lownodeutilization.go:210] "Node has been classified" category="overutilized" node="worker-cluster-jlkcx-2" usage={"MetricResource":"100"} usagePercentage={"MetricResource":100}
+I0102 14:53:52.963143       1 lownodeutilization.go:210] "Node has been classified" category="underutilized" node="worker-cluster-jlkcx-2" usage={"MetricResource":"100"} usagePercentage={"MetricResource":100}
 ----
 
 +
-NOTE: We can observe we have one overutilized node
+NOTE: We can observe we have one overutilized node, the one where the stress-test pod is running, the VM will be scheduled on another node.
 
 +
-. Confirm the pods are evicted and rescheduled on another node
+. Confirm the pods are evicted and rescheduled on another node (using the -w watch parameter as it can take some time for the eviction to happen)
+
 
 +
 [.wrap,console,role="execute",subs="attributes"]
 ----
-oc get pods -n dynamic-schedule -o wide
+oc get pods -n dynamic-schedule -o wide -w
 ----
 
 +
 [source,console]
+.Output
 ----
-oc get pods -n dynamic-schedule -o wide
 NAME                                        READY   STATUS      RESTARTS   AGE     IP             NODE                            NOMINATED NODE   READINESS GATES
 virt-launcher-dynamic-schedule-vm-1-lltlv   0/2     Completed   0          31m     10.232.0.240   control-plane-cluster-jlkcx-1   <none>           1/1
 virt-launcher-dynamic-schedule-vm-1-n6ct7   2/2     Running     0          2m37s   10.234.0.84    worker-cluster-jlkcx-2          <none>           1/1
@@ -243,14 +244,15 @@ oc -n dynamic-schedule-stress-test patch deployment stress-test --type merge -p 
 +
 [.wrap,console,role="execute",subs="attributes"]
 ----
-oc get pods -n dynamic-schedule -o wide
+oc get pods -n dynamic-schedule -o wide -w
 ----
 
 +
-[,shell,role=wrap,subs="attributes"]
+[,shell,subs="attributes"]
 .Output
 ----
 NAME                                        READY   STATUS      RESTARTS   AGE     IP             NODE                            NOMINATED NODE   READINESS GATES
 virt-launcher-dynamic-schedule-vm-1-4qhnq   2/2     Running     0          4m28s   10.232.1.70    control-plane-cluster-jlkcx-1   <none>           1/1
 virt-launcher-dynamic-schedule-vm-1-n6ct7   0/2     Completed   0          9m49s   10.234.0.84    worker-cluster-jlkcx-2          <none>           1/1
 ----
+
