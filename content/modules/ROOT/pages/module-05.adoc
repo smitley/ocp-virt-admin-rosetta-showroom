@@ -141,7 +141,6 @@ oc -n dynamic-schedule-stress-test scale deployment stress-test --replicas=1
 
 +
 .. Verify the deployment
-
 +
 [.wrap,console,role=execute,subs="attributes"]
 ----
@@ -175,10 +174,10 @@ I1113 15:30:00.673653       1 nodeutilization.go:205] "Evicting pods based on pr
 I1113 15:30:00.673755       1 evictions.go:551] "Evicted pod in dry run mode" pod="dynamic-schedule/virt-launcher-dynamic-schedule-vm-1-lltlv" reason="" strategy="LowNodeUtilization" node="worker01" profile="DevKubeVirtRelieveAndMigrate"
 ----
 +
-NOTE: We can observe the virt-launcher-dynamic-schedule-vm-1-lltlv pod would have been evicted but the mode is set to Predictive so the eviction is in dry run mode. To evict pods, set mode to Automatic.
+NOTE: We can observe the virt-launcher-dynamic-schedule-vm-1-lltlv pod would have been evicted but the mode is set to *Predictive* so the eviction is in dry run mode. To evict pods, set mode to *Automatic*.
 
 +
-. Switch the descheduler mode to Automatic
+. Switch the descheduler mode to *Automatic*
 
 +
 [.wrap,console,role="execute",subs="attributes"]
