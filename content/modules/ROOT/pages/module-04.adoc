@@ -2,7 +2,7 @@
 
 This lab is designed to enhance your proficiency in applying Node Affinity, Pod Affinity, and Anti-Pod Affinity specifically to Virtual Machines. The core purpose is to illustrate the practical application of these principles in real-world scenarios and solidify your conceptual understanding.
 
-NOTE: Affinity and Anti-Affinity are very similar to VMware Adaptive Resource Scheduling and Rebalancing.
+NOTE: Affinity and Anti-Affinity are similar to VMware Adaptive Resource Scheduling and Rebalancing.
 
 include::lab-access.adoc[]
 
