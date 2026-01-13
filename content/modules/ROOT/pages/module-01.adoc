@@ -188,7 +188,7 @@ image::exercise1/01-image-storage-008.png[title="Migration has started", link=se
 
 . To view the storage migration status, navigate to *Migration for Virtualization -> Storage migrations* where you can view the status of the migration plan. The migration plan will start in the *Pending* state, then move to *Running*, then finally *Completed*. 
 +
-NOTE: It may take some time for the migration to complete.
+NOTE: It may take over a minute for the migration to start, and over five minutes for the migration to complete.
 +
 image::exercise1/01-image-storage-009.png[title="Migration is running", link=self, window=blank, width=100%]
 
