@@ -22,7 +22,7 @@ During maintenance or troubleshooting, you might need to migrate a VM to a diffe
 
 [NOTE]
 ====
-This feature is similar to VMware's vMotion feature.
+This feature is similar to VMware's Compute vMotion feature.
 ====
 
 In this lab, you will be performing a live migration of Virtual Machine from one compute node to another. To do this, you will access a running VM, determine its current node, and then migrate it to another node.
