@@ -9,7 +9,6 @@
 *** xref:module-01.adoc#computerandrequirements[Requirements]
 *** xref:module-01.adoc#computerandinstructions[Instructions]
 ** xref:module-01.adoc#compute[Compute Migration to a specific node]
-*** xref:module-01.adoc#computerequirements[Requirements]
 *** xref:module-01.adoc#computeinstructions[Instructions]
 ** xref:module-01.adoc#storage[Storage Migration]
 *** xref:module-01.adoc#storagerequirements[Requirements]

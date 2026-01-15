@@ -42,5 +42,3 @@ The lab environment is running Red Hat OpenShift 4.20 with the following require
 * Migration Toolkit for Virtualization
 
 include::lab-access.adoc[]
-
-include::bastion-access.adoc[]
