@@ -42,7 +42,7 @@ oc get nodes -l node-role.kubernetes.io/worker=
 ----
 
 +
-[,shell,role=wrap,subs="attributes"]
+[,shell,subs="attributes"]
 .Output
 ----
 NAME                            STATUS   ROLES                         AGE   VERSION
@@ -173,7 +173,7 @@ oc get vmi overcommit-vm-1 -n over-commit -o jsonpath='{.spec.domain.cpu}{"\n"}'
 [,shell,role=wrap,subs="attributes"]
 .Output
 ----
-{"cores":16,"maxSockets":8,"model":"EPYC","sockets":2,"threads":1}
+{"cores":16,"maxSockets":8,"model":"Icelake-Server-v2","sockets":2,"threads":1}
 ----
 
 +
@@ -189,7 +189,7 @@ image::exercise2/vm-details.png[title="Confirm number of CPUs", link=self, windo
 .. Confirm the number of CPUs inside the guest
 
 +
-.. Click on the *Console* tab, select *Serial console* from the drop down. If necessary, click the blue *Connect* button.
+Click on the *Console* tab, select *Serial console* from the drop down. If necessary, click the blue *Connect* button.
 
 +
 Login to the Virtual Machine using *Copy to clipboard* and *Paste to console* with the *User name* and *Password* credentials from above the console window.
@@ -222,7 +222,10 @@ To calculate the overcommit ratio on a specific node:
 .. Identify all VMs running on the node:
 
 +
-IMPORTANT: In the following step, you need to replace "node_name" with the name of the node your VM is running on.
+[IMPORTANT]
+====
+In the following step, you need to replace "node_name" with the name of the node your VM is running on.
+====
 
 +
 [,shell,role="execute wrap",subs="attributes"]
@@ -239,7 +242,7 @@ overcommit-vm-1   75m   Running   10.232.0.121   control-plane-cluster-qc86c-1  
 ----
 
 +
-Set the *NODE* to the *NODENAME* from above:
+Set *NODE* to the *NODENAME* from above:
 
 +
 [,shell,role="execute wrap",subs="attributes"]
@@ -288,7 +291,7 @@ Example:
 . Understanding the Default 10:1 CPU Overcommit Ratio
 
 +
-OpenShift Virtualization applies a default *10:1 CPU overcommit ratio* when you don't explicitly specify CPU requests. This means that if a VM has multiple vCPUs, the actual CPU request on the *virt-launcher* pod will be 1/10th of the total vCPUs of the VM.
+OpenShift Virtualization applies a default *10:1 CPU overcommit ratio* when you don't explicitly specify CPU requests. This means that if a VM has multiple vCPUs, the actual CPU request on the *virt-launcher* pod will be 1/10th of the total cpu requested by the VM.
 
 . Check *virt-launcher* pod CPU Requests
 
