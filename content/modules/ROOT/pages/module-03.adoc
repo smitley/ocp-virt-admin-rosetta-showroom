@@ -10,68 +10,112 @@ include::lab-access.adoc[]
 
 [#cpu]
 == Adding CPU and Memory to a Running VM
-In this lab, we will add more CPU and Memory resources to a virtual machine by changing the virtual machine’s Instance Type. To do this, you will start with an existing VM that has a single vCPU and 2 GiB of memory. Using the OpenShift Virtualization console, you will modify the configuration of the VM Instance Type to a type that has 2 vCPU and 4 GiB of memory.
+In this lab, we will add additional CPU and Memory resources to a Virtual Machine by changing the Virtual Machine’s Instance Type. To do this, you will start with an existing VM that has a single vCPU and 2 GiB of memory. Using the OpenShift Virtualization console, you will modify the configuration of the VM Instance Type to a type that has 2 vCPU and 4 GiB of memory.
 
-NOTE: This is similar to the VMware Hot Add feature for VMs.
+[NOTE]
+====
+This is similar to VMware's *Hot Add* feature.
+====
 
 [#cpuinstructions]
 === Instructions
 
-[start=1]
 . Ensure you are <<labaccess,logged in to the OpenShift Console as the *admin* user>> from your *web browser* and continue to the next step.
 
 +
-. Navigate to *Virtualization -> Virtual Machines*, and select the *hot-plug* project. Select the VM named *hot-plug-vm1*.
-Note that the InstanceType of this VM is *u1.small*. Above the InstanceType, you can see that the *CPU | Memory* for this VM is *1 CPU | 2GiB Memory*. This is the current configuration for this VM.
+. Using the *OpenShift Console*, navigate to *Virtualization → Virtual Machines*.
+
++
+Under *All projects*, select the *hot-plug* namespace and select the *hot-plug-vm1* VM.
+
++
+Note that the InstanceType is set to *u1.small*.
+
++
+Above the InstanceType, you can see that the current *CPU | Memory* for this VM is *1 CPU | 2GiB Memory*.
+
 +
 image::exercise3/03-image-cpu-001.png[title="CPU and Memory before hot plug", link=self, window=blank, width=100%]
 
-. Click on the Configuration tab and select Details, if it is not already selected.  Note that the InstanceType is *General Purpose* and *1 CPU | 2GiB Memory*.
++
+. Start the *hot-plug-vm1* VM using *virtctl* from your *Terminal* window
+
++
+[,shell,role="execute wrap",subs="attributes"]
+----
+virtctl start hot-plug-vm1 -n hot-plug
+----
+
++
+[,shell,role=wrap,subs="attributes"]
+.Output
+----
+VM hot-plug-vm1 was scheduled to start
+----
+
++
+. Click on the Configuration tab and select Details, if it is not already selected. 
+
++
+You can see that the InstanceType is *General Purpose* and *1 CPU | 2GiB Memory*.
+
 +
 image::exercise3/03-image-cpu-002.png[title="Virtual Machine details", link=self, window=blank, width=100%]
 
-. Click on the blue pencil icon to modify the CPU and Memory resources.  In the window that appears, pull down the Size menu and select *2xmedium: 2CPUs, 4Gi Memory*.
+. Click on the blue pencil icon to modify the CPU and Memory resources. 
+
++
+In the window that appears, click the *Size* drop down and select *2xmedium: 2CPUs, 4Gi Memory*.
+
++
 Click the Save button.
+
 +
 image::exercise3/03-image-cpu-003.png[title="Edit Instance Type", link=self, window=blank, width=100%]
 
 . The configuration in the Details panel will now show that the virtual machine has 2 CPUs and 4 GiB of memory.
+
 +
 image::exercise3/03-image-cpu-004.png[title="Virtual Machine details", link=self, window=blank, width=100%]
 
-. Click on the Console tab and view the console window of the VM. You will see messages from the kernel that additional CPU and memory are now available.
++
+NOTE: In order for the new CPU and Memory configuration to take effect, the virtual machine will automatically migrate from one worker node to another. If the new CPU and Memory configuration does not appear immediately, you may have to wait a few minutes.
+
 +
 image::exercise3/03-image-cpu-005.png[title="CPU and Memory messages", link=self, window=blank, width=100%]
 
-. Verify the new resources by logging in to the VM using the credentials at the top of the console window. In this case, the username is *rhel* and the password is *redhat*.
 +
-NOTE: In order for the new CPU and Memory configuration to take effect, the virtual machine will automatically migrate from one worker node to another. If the new CPU and Memory configuration does not appear immediately, you may have to wait a few minutes.
-+
-image::exercise3/03-image-cpu-006.png[title="Login to VM", link=self, window=blank, width=100%]
+. From the UI, click on the *Console* tab, select *Serial console* from the drop down. If necessary, click the blue *Connect* button.
 
-. To validate that the VM now has 2 CPUs, run the command:
++
+Login to the Virtual Machine using *Copy to clipboard* and *Paste to console* with the *User name* and *Password* credentials from above the console window.
+
++
+image::exercise3/03-image-cpu-006-v2.png[title="Login to VM", link=self, window=blank, width=100%]
+
+. To validate that the VM now has 2 CPUs and 4GiB of memory, run the following:
+
 +
 .Get the number of processors
 [source,text,role=execute]
 ----
 nproc
 ----
-+
-You will see that two processors exist.
-+
-To validate that the VM now has 4GiB of memory, run the command:
+
 +
 .Get the amount of memory
 [source,text,role=execute]
 ----
-  $ free -m
+free -m
 ----
+
 +
-You will see that the VM has approximately 4 GiB of total memory.
+You will see that the VM has 2 CPUs and approximately 4 GiB of total memory.
+
 +
 NOTE: This VM image has kdump enabled, which reserves some memory for the kernel. This is why the memory amount appears to be less than 4 GiB. In fact, 4 GiB of memory is configured for the VM, but the operating system sees a lower number. If kdump were disabled, the total memory would be 4 GiB.
 +
-image::exercise3/03-image-cpu-007.png[title="Verify new resources", link=self, window=blank, width=100%]
+image::exercise3/03-image-cpu-007-v2.png[title="Verify new resources", link=self, window=blank, width=100%]
 
 [#disk]
 == Adding a Virtual Disk to a Running VM
