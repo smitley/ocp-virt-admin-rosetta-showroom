@@ -17,7 +17,7 @@ With time-sliced CPUs, the Linux kernel's *Completely Fair Scheduler (CFS)* mana
 
 By default OpenShift Virtualization has a 10:1 overcommit ratio. To achieve CPU overcommit, each VM’s virt-launcher pod will define _100m_ of CPU requests or _1/10th_ of a CPU from a Kubernetes resource and scheduling perspective, per vCPU requested by the VM.
 
-The default _10:1_ overcommit ratio can be configured to the desired overcommit level by changing the *cpuAllocationRatio* on the *KubeVirt* Custom Resource. Changing this ratio will influence the CPU requests for each vCPU that is allocated by default, which enforces the maximum level of CPU overcommit through Kubernetes based request scheduling.
+The default _10:1_ overcommit ratio can be configured to the desired overcommit level by changing the *vmiCPUAllocationRatio* on the *hyperconverged* Custom Resource. Changing this ratio will influence the CPU requests for each vCPU that is allocated by default, which enforces the maximum level of CPU overcommit through Kubernetes based request scheduling.
 
 [NOTE]
 ====
@@ -190,7 +190,7 @@ oc get vmi overcommit-vm-1 -n over-commit -o jsonpath='{.spec.domain.cpu}{"\n"}'
 ----
 
 +
-.. Using the *OpenShift Console*, navigate to *Virtualization → Virtual Machines* and select the *overcommit-vm-1* VM to view the *CPU/Memory* allocation.
+.. Using the *OpenShift Console*, navigate to *Virtualization → Virtual Machines*. Under *All projects*, select the *over-commit* namespace and select the *overcommit-vm-1* VM to view the *CPU/Memory* allocation.
 
 +
 image::exercise2/vm-details.png[title="Confirm number of CPUs", link=self, window=blank, width=100%]
@@ -345,7 +345,10 @@ oc get pods -n over-commit -l vm.kubevirt.io/name=overcommit-vm-1 \
 ----
 
 +
-Using the *OpenShift Console*, navigate to *Workloads → Pods* and select the *virt-launcher* pod for the VM.
+Using the *OpenShift Console*, navigate to *Workloads → Pods*. From the *Project:* dropdown and select the *over-commit* namespace to see the *virt-launcher* pod for the VM.
+
++
+Click on the *virt-launcher* pod and to go the *YAML* tab to see the *cpu requests* value.
 
 +
 image::exercise2/pod-cpu-details.png[title="Confirm number of CPUs", link=self, window=blank, width=100%]
@@ -356,23 +359,44 @@ IMPORTANT: **A VM with 32 vCPUs only requests `3200m` (0.1 * 32 = 3.2 CPU) by de
 [#memory]
 == Memory Overcommit
 
-Kubernetes, until 1.21, and OpenShift / OpenShift Virtualization, until 4.21, did not have a native SWAP implementation and thus did now allow use of SWAP.
+Kubernetes, until 1.21, and OpenShift, until 4.21, did not have a Generally Available native SWAP implementation and thus did now allow use of SWAP.
 
 Memory oversubscription without use of swap is hazardous because if the amount of memory required by processes running on a node exceeds the amount of RAM available, processes will be killed. That's not desirable, particularly for VMs where the workloads will be go offline if the VM is killed. 
 
 OpenShift Virtualization ships the *wasp-agent* to permit the controlled use of swap with VMs.
 Refer to the https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/virtualization/postinstallation-configuration#virt-using-wasp-agent-to-configure-higher-vm-workload-density_virt-configuring-higher-vm-workload-density[wasp-agent component documentation] for more information.
 
-NOTE: We won't configure the *wasp-agent* in this lab due to time and resource constraints but can read the documentation and install process on your own time.
+NOTE: We won't configure the *wasp-agent* in this lab due to time and resource constraints but you can read the documentation and install procedures on your own time.
 
-IMPORTANT: Starting with Kubernetes 1.21 and OpenShift 4.21 the *wasp-agent* will be replaced by a native Kubernetes based SWAP implementation.
+IMPORTANT: Starting with Kubernetes 1.21 and OpenShift 4.21 the *wasp-agent* will be superseded by the native Kubernetes SWAP implementation.
 
-The *memoryOvercommitPercentage* parameter tells CNV how to scale the memory request that is made for each VM created. So when set to 100, CNV calculates its memory request based on the full declared memory size of the VM; when it's set to a higher value, CNV sets the request to a smaller value than that actually required by the VM, allowing overcommitting of memory. 
+The *memoryOvercommitPercentage* paramater on the *hyperconverged* Custom Resourse tells OpenShift Virtualization how to scale the memory requests for each VM. When set to the default, 100, it calculates memory requests based on the full amount of memory declared by the VM. When it's set to a higher value, the request is set to a proportionally smaller value than the VM requested, allowing for memory overcommit. 
 
-For example, with a VM with 16 GiB configured, if the overcommit percentage is set to its default value of 100, the memory request that CNV will apply to the pod is 16 GiB plus some extra for the overhead of the QEMU process running the VM.
-If it's set to 200, the request will be set to 8 GiB plus the overhead.
+For example, with a VM with 16GiB of memory.
 
+If the overcommit percentage is set to its default value of 100, the memory request on the pod will be 16 GiB plus some extra for the overhead for the QEMU process running the VM.
+
+If it's set to 200, the request on the pod will be set to 8GiB plus the overhead, with the VM still seeing 16GiB.
+
+[IMPORTANT]
+====
+To calculate the request value when overcomitting memory, you can use the following formula:
+
+requested memory = VM memory * (100 / memoryOvercommitPercentage)
+
+16 * (100 / 200) = 8GiB
+
+or, with 150% overcommit
+
+16 * (100 / 150) = 10.66GiB
+====
+
+[NOTE]
+====
 Memory overhead per virtual machine ≈ (0.002 × requested memory) + 218 MiB + 8 MiB × (number of vCPUs) + 16 MiB × (number of graphics devices) + (additional memory overhead)
+
+See the section on https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/virtualization/installing#memory-overhead_preparing-cluster-for-virt[Virtual machine memory overhead] in the OpenShift Virtualization docs.
+====
 
 [#memoryinstructions]
 === Instructions
@@ -380,10 +404,8 @@ Memory overhead per virtual machine ≈ (0.002 × requested memory) + 218 MiB + 
 . Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
 
 +
-. Memory requests with the default overcommit percentage
 
-+
-Observe the memory requests for the virt-launcher pod compared to the memory allocated to the VM :
+Using the *OpenShift Console*, navigate to *Virtualization → Virtual Machines*. Under *All projects*, select the *over-commit* namespace and select the *overcommit-vm-1* VM to view the *CPU/Memory* allocation.
 
 +
 image::exercise2/vm-memory-assigned.png[title="VM Memory Assigned", link=self, window=blank, width=100%]
@@ -402,6 +424,12 @@ oc get vm -n over-commit overcommit-vm-1 -o json | jq .spec.template.spec.domain
   "guest": "2Gi"
 }
 ----
+
++
+Using the *OpenShift Console*, navigate to *Workloads → Pods*. From the *Project:* dropdown and select the *over-commit* namespace to see the *virt-launcher* pod for the VM.
+
++
+Click on the *virt-launcher* pod and to go the *YAML* tab to see the *memory requests* value.
 
 +
 image::exercise2/virt-launcher-memory-request.png[title="Virt-Launcher Memory Request", link=self, window=blank, width=100%]
