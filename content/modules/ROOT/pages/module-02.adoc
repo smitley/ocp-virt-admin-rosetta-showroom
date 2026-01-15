@@ -232,21 +232,29 @@ To calculate the overcommit ratio on a specific node:
 .. Identify all VMs running on the node:
 
 +
-IMPORTANT: In the following step, you need to replace "node_name" with an actual node from your cluster.
+IMPORTANT: In the following step, you need to replace "node_name" with the name of the node your VM is running on.
+
++
+[,shell,role="execute wrap",subs="attributes"]
+----
+oc get vmi -n over-commit -o wide
+----
+
++
+[,shell,subs="attributes"]
+.Output
+----
+NAME              AGE   PHASE     IP             NODENAME                        READY   LIVE-MIGRATABLE   PAUSED
+overcommit-vm-1   75m   Running   10.232.0.121   control-plane-cluster-qc86c-1   True    True              
+----
+
++
+Set the *NODE* to the *NODENAME* from above:
 
 +
 [,shell,role="execute wrap",subs="attributes"]
 ----
 NODE="node_name"
-oc get vmi -A -o wide | grep "$NODE"
-----
-
-+
-[,shell,role=wrap,subs="attributes"]
-.Output
-----
-affinity           pod-anti-affinity-vm    4h19m   Running   10.133.2.11   worker-cluster-jlkcx-1  True    True
-over-commit        overcommit-vm-1         47m     Running   10.133.2.25   worker-cluster-jlkcx-1   True    True
 ----
 
 +
@@ -348,16 +356,16 @@ IMPORTANT: **A VM with 32 vCPUs only requests `3200m` (0.1 * 32 = 3.2 CPU) by de
 [#memory]
 == Memory Overcommit
 
-By design, Kubernetes, and hence OpenShift and OpenShift Virtualization, does not allow use of swap.
+Kubernetes, until 1.21, and OpenShift / OpenShift Virtualization, until 4.21, did not have a native SWAP implementation and thus did now allow use of SWAP.
 
-Memory oversubscription without use of swap is hazardous because if the amount of memory required by processes running on a node exceeds the amount of RAM available, processes will be killed. That's not desirable in any event, but particularly not for VMs where the workloads running on VMs will be taken down if the VMs are killed. 
+Memory oversubscription without use of swap is hazardous because if the amount of memory required by processes running on a node exceeds the amount of RAM available, processes will be killed. That's not desirable, particularly for VMs where the workloads will be go offline if the VM is killed. 
 
-OpenShift Virtualization has built the wasp-agent component to permit controlled use of swap with VMs.
+OpenShift Virtualization ships the *wasp-agent* to permit the controlled use of swap with VMs.
 Refer to the https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/virtualization/postinstallation-configuration#virt-using-wasp-agent-to-configure-higher-vm-workload-density_virt-configuring-higher-vm-workload-density[wasp-agent component documentation] for more information.
 
-NOTE: We won't configure the wasp-agent component with real swap backend in this lab.
+NOTE: We won't configure the *wasp-agent* in this lab due to time and resource constraints but can read the documentation and install process on your own time.
 
-IMPORTANT:  wasp-agent will be replaced by the native kubernetes based SWAP starting 4.21.
+IMPORTANT: Starting with Kubernetes 1.21 and OpenShift 4.21 the *wasp-agent* will be replaced by a native Kubernetes based SWAP implementation.
 
 The *memoryOvercommitPercentage* parameter tells CNV how to scale the memory request that is made for each VM created. So when set to 100, CNV calculates its memory request based on the full declared memory size of the VM; when it's set to a higher value, CNV sets the request to a smaller value than that actually required by the VM, allowing overcommitting of memory. 
 
