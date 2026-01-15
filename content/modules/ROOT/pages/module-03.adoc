@@ -120,9 +120,12 @@ image::exercise3/03-image-cpu-007-v2.png[title="Verify new resources", link=self
 [#disk]
 == Adding a Virtual Disk to a Running VM
 
-In this lab, we will add a new network interface connection (NIC) to an existing VM. To do this, you will start with an existing VM that has a single NIC on the pod network. Using the OpenShift Virtualization console, you will modify the configuration of the VM to include an additional NIC on a new network. You complete the hot plug action by live-migrating the VM to another worker node.
+In this lab, we will add a new Disk to an existing VM. To do this, you will start with an existing VM with 1 or more Disks. Using the OpenShift Virtualization console, you will modify the configuration of the VM to include an additional hot plugged Disk.
 
-NOTE: This is similar to the VMware Hot Add feature for VMs.
+[NOTE]
+====
+This is similar to VMware's *Hot Add* feature.
+====
 
 [#diskinstructions]
 === Instructions
@@ -131,38 +134,62 @@ NOTE: This is similar to the VMware Hot Add feature for VMs.
 . Ensure you are <<labaccess,logged in to the OpenShift Console as the *admin* user>> from your *web browser* and continue to the next step.
 
 +
-. Navigate to *Virtualization → Virtual Machines*, and select the *hot-plug* project. Select the VM named *hot-plug-vm1*.
+. Using the *OpenShift Console*, navigate to *Virtualization → Virtual Machines*.
+
++
+Under *All projects*, select the *hot-plug* namespace and select the *hot-plug-vm1* VM.
 
 +
 image::exercise3/03-image-disk-001.png[title="hot-plug-vm1 details", link=self, window=blank, width=100%]
 
-. Click on the Configuration tab and select Storage. Note that the VM currently has a single bootable disk. You may also login to the VM via the Console tab and view the storage details from the operating system.
+. Click on the *Configuration* tab and select *Storage*. You can see that the Virtual Machine currently has a single 30GB bootable disk that is using the *Storage class* called *ocs-external-storagecluster-ceph-rbd*.
 
 +
 image::exercise3/03-image-disk-002.png[title="VM has only one disk", link=self, window=blank, width=100%]
 
-. Add an empty disk by clicking the Add disk button and then clicking on *Empty disk (blank)*.
+. Add an empty disk by clicking the *Add* button under *Disks* and then selecting *Empty disk (blank)*.
+
 +
 image::exercise3/03-image-disk-003.png[title="Add an empty disk", link=self, window=blank, width=100%]
 
++
 . In the window that appears, give the new disk a name (e.g. *data-disk-01*) and change the size to 5 GiB. The rest of the options may remain at their defaults.
-Click on the Save button.
+
++
+Click the *Save* button.
+
 +
 image::exercise3/03-image-disk-004.png[title="Configure the new disk", link=self, window=blank, width=100%]
 
-. The new disk has been added with a notification of *Persistent Hotplug*. 
++
+. The new disk has been added with a label of *Persistent Hotplug*. 
+
 +
 image::exercise3/03-image-disk-005.png[title="The disk is added", link=self, window=blank, width=100%]
 
-. After some time, the console may show messages that a new disk has been attached (*/dev/vdc*). The new disk may not appear immediately, so please be patient.
++
+. Scroll up and click on the *Console* tab. The standard out of the VNC console will show logs that a new disk has been attached (*/dev/vdc*). The new disk may not appear immediately, so please be patient
+
++
+If there are no logs in standard out, *sudo dmesg* will show them and the addition of the disk
+
 +
 image::exercise3/03-image-disk-006.png[title="Kernel messages about a new disk", link=self, window=blank, width=100%]
 
-. Login to the virtual machine using the credentials in the Console tab and then run the *lsblk* command. Note that the new 5 GiB disk has been added as *vdc*.
++
+. Select *Serial console* from the drop down. If necessary, click the blue *Connect* button.
+
++
+Login to the Virtual Machine using *Copy to clipboard* and *Paste to console* with the *User name* and *Password* credentials from above the console window.
+
++
+Run the *lsblk* command and you will see the new 5 GiB disk added as *vdc*.
+
 +
 image::exercise3/03-image-disk-007.png[title="View the new disk from the OS", link=self, window=blank, width=100%]
 
-. The new disk is hot-plugged to the virtual machine by way of a new pod that manages access to the disk. The new pod in the project is called *hp-volume-xxxxx* and runs in addition to the virt-launcher pod for the VM.
+. The new disk is hot-plugged to the virtual machine by way of a new pod that manages access to the disk. The new pod is created in same project as the VM and is called *hp-volume-xxxxx*. This pod runs in addition to the virt-launcher.
+
 +
 .Get a list of pods
 [source,text,role=execute]
@@ -177,63 +204,115 @@ hp-volume-mdnjd                     1/1     Running     0          114s
 virt-launcher-hot-plug-vm1-rb6lg    2/2     Running     0          147m
 ----
 
-. The hp-volume pod will stop if the VM is stopped and the pod will start again when the VM is started. The new disk can be used as any normal disk would be used and will persist even if the VM is  stopped and started.
++
+. The *hp-volume* pod will stop if the VM is stopped and the pod will start again when the VM is started. The new disk can be used as any normal disk would be used and will persist even if the VM is stopped and started.
 
-. Optional: Login to the VM using the credentials provided on the Console tab and create a filesystem on the new disk and mount it on the system.
++
+. We are not going to do it, but at this point you can create a filesystem on the new disk, mount it and use it as needed.
 
-. Now you will remove the hot-plugged disk from the virtual machine. If you mounted the hot-plugged disk on your system, make sure to umount it before proceeding.
-Navigate to the *hot-plug-vm1* virtual machine and then click on Configuration -> Storage.
-Note the name of the PVC that you will remove (e.g. *dv-hot-plug-vm1-data-disk-01-um6O11*) because you may want it for the Bonus Lab later!
-Click on the three dots on the right side of the hot-plugged disk and select Detach.
++
+. Now you will remove the hot-plugged disk from the virtual machine.
+
++
+. Using the *OpenShift Console*, navigate to *Virtualization → Virtual Machines*.
+
++
+Under *All projects*, select the *hot-plug* namespace and select the *hot-plug-vm1* VM.
+
++
+Click on the *Configuration* tab and select *Storage*.
+
++
+Note the name of the object that you will remove (e.g. *dv-hot-plug-vm1-data-disk-01-um6O11*) because you may want it for the Bonus Lab later!
+
++
+Click on the three dots on the right side of the *hot-plugged* disk and select *Detach*.
+
 +
 image::exercise3/03-image-disk-011.png[title="Detach the disk", link=self, window=blank, width=100%]
 
-. Confirm the action by clicking on the Detach button.
+. Confirm the action by clicking on the *Detach* button.
+
 +
 image::exercise3/03-image-disk-012.png[title="Confirm disk detach", link=self, window=blank, width=100%]
 
-. Confirm in the VM that the disk (*vdc*) has been removed by logging into the virtual machine with the credentials in the Console tab, then running the *lsblk* command. The hot-plugged disk is no longer present on the system.
++
+. Confirm that the disk (*vdc*) has been removed.
+
++
+From the VM page, click on the *Console* tab, select *Serial console* from the drop down. If necessary, click the blue *Connect* button.
+
++
+Login to the Virtual Machine using *Copy to clipboard* and *Paste to console* with the *User name* and *Password* credentials from above the console window.
+
++
+Run the *lsblk* command and you will see that the hot-plugged disk is no longer present on the system.
+
 +
 NOTE: The detached disk still exists as a PVC. It can be re-attached, or attached to a different VM, or it can be deleted if it is no longer needed.
+
 +
 image::exercise3/03-image-disk-013.png[title="Disk is removed in OS", link=self, window=blank, width=100%]
 
 [#bonuslabinstructions]
 === Bonus Lab - Convert a Hot Plug Disk to a Permanent Disk
 
-The steps below are optional as they do not directly relate to hot plugging a new disk. However, it may be advantageous
-for you to know about converting a hot-plugged disk to a standard disk, which requires a VM restart. 
+The steps below are optional as they are not directly relate to hot plugging a new disk. However, it may be advantageous for you to know how to convert a hot-plugged disk to a standard disk, which requires a VM restart. 
 
-[start=1]
-. The PVC you detached above still exists until it is deleted manually. Therefore, you can
-reattach the PVC as a standard disk while the VM is shut down.
+. The PVC you detached above still exists until it is deleted manually. Therefore, you can reattach the PVC as a standard disk while the VM is shut down.
 
 +
-. Navigate to the virtual machine called *hot-plug-vm1* and stop it, either by using the square stop button or by pulling down the Actions menu and clicking on Stop.
+. Navigate to *Virtualization -> Virtual Machines*, and select the *hot-plug* project. Select the VM named *hot-plug-vm1*.
+
++
+*Stop* the VM, either by using the *square stop button* or by selecting the *Actions* menu and clicking on *Stop*.
+
 +
 image::exercise3/03-image-disk-persist-002.png[title="Stop the VM", link=self, window=blank, width=100%]
 
-. Click on the Configuration tab, and then Storage. Click on the Add pull down menu and select Volume.
++
+. Click on the *Configuration* tab, and then *Storage*.
+
++
+Click on the *Add* pull down menu and select *Volume*.
+
 +
 image::exercise3/03-image-disk-persist-003.png[title="Add a volume", link=self, window=blank, width=100%]
 
-. Give the disk a name, if desired, and select the previously disconnected PVC name in the PersistentVolumeClaim name menu (e.g. *dv-hot-plug-vm1-data-disk-01-um6O11*)
+. Give the disk a name, if desired, and select the previously disconnected PVC from the *PersistentVolumeClaim name* dropdown (e.g. *dv-hot-plug-vm1-data-disk-01-um6O11*)
+
++
+Click *Save*
+
 +
 image::exercise3/03-image-disk-persist-004.png[title="Select the PVC", link=self, window=blank, width=100%]
 
-. Now both the boot volume and the new data disk are visible in the virtual machine configuration.
++
+. Now both the boot volume and the new disk are visible in the virtual machine configuration.
+
 +
 NOTE: The new disk no longer has the *Hotplug persistent* label because it is not being added while the VM is running.
+
 +
 image::exercise3/03-image-disk-persist-005.png[title="Both disks are attached", link=self, window=blank, width=100%]
 
-. Start the virtual machine by either clicking on the blue Play icon, or by pulling down the Actions menu and clicking on Start.
++
+. Start the virtual machine by clicking on the *blue Play icon*, or by selecting the *Actions* menu and clicking *Start*.
+
 +
 image::exercise3/03-image-disk-persist-006.png[title="Both disks are attached", link=self, window=blank, width=100%]
 
-. Once the virtual machine has booted, click on the Console tab and login to the virtual machine using the credentials above the console window.
-The disk is now attached, although it has changed names. It was *vdc* and now it is *vdb*.
-In the previous exercise, if you chose to write data to the second disk, you will see that the data is still there.
+. Once the virtual machine is *Running*, click on the *Console* tab and select the *Serial console* from the drop down. If necessary, click the blue *Connect* button.
+
++
+Login to the Virtual Machine using *Copy to clipboard* and *Paste to console* with the *User name* and *Password* credentials from above the console window.
+
++
+Run *lsblk* and you can see that the disk is attached, although it may have changed names.
+
++
+If you formatted or wrote data to the disk while it was hot plugged, you would see that the data is still on the disk.
+
 +
 image::exercise3/03-image-disk-persist-007.png[title="The disk is attached", link=self, window=blank, width=100%]
 
