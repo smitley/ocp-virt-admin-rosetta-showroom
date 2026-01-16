@@ -419,7 +419,6 @@ NAME                      AGE    STATUS      READY
 vm-migration-ns-ns-live   7m1s   Migrating   False
 ----
 
-
 [start=2]
 . From the Console
 
@@ -496,7 +495,71 @@ The UI based workflow is not fully functional yet. The workflow is complete, but
 
 . Ensure you are <<labaccess,logged in to the OpenShift Console as the *admin* user>> from your *web browser* and continue to the next step.
 
-. From the Console left hand menu, navigate to *Migration for Virtualization* and click *Migration plans*.
+. Before you start, cleanup and VMs from the CLI based migration.
+
++
+Stop the destination VM
+
++
+[.wrap,console,role=execute]
+----
+virtctl stop vm-migration-ns-ns-live -n vm-live-migration-destination
+----
+
++
+[source,console]
+----
+VM vm-migration-ns-ns-live was scheduled to stop
+----
+
++
+Delete the destination VM
+
++
+[.wrap,console,role=execute]
+----
+oc delete vm vm-migration-ns-ns-live -n vm-live-migration-destination
+----
+
++
+[source,console]
+----
+virtualmachine.kubevirt.io "vm-migration-ns-ns-live" deleted
+----
+
++
+Start the source VM
+
++
+[.wrap,console,role=execute]
+----
+virtctl start vm-migration-ns-ns-live -n vm-live-migration-source
+----
+
++
+[source,console]
+----
+VM vm-migration-ns-ns-live was scheduled to start
+----
+
++
+Make sure the source VM is *Running*
+
++
+[.wrap,console,role=execute]
+----
+oc get vmi -n vm-live-migration-source
+----
+
++
+[source,console]
+----
+NAME                      AGE    PHASE     IP             NODENAME                        READY
+vm-migration-ns-ns-live   113s   Running   10.232.1.115   control-plane-cluster-dvddt-1   True
+----
+
++
+. From the left side panel, navigate to *Migration for Virtualization* and click *Migration plans*.
 
 +
 image::exercise7/ui/image1-click-migration-plans.png[title="Migration Plans", link=self, window=blank, width=100%]
@@ -504,9 +567,18 @@ image::exercise7/ui/image1-click-migration-plans.png[title="Migration Plans", li
 . From the *Migration plans* page, click *Create plan*.
 
 +
+[NOTE]
+====
+If *Create plan* is greyed out, make sure you change the *project* to *openshift-mtv* or *All projects* from the *Project:* dropdown at the top of the page.
+====
+
++
 image::exercise7/ui/image2-click-create-plans.png[title="Create Migration Plan", link=self, window=blank, width=100%]
 
-. On the *Creation migration plan* page, give your plan a name like `namespace-to-namespace`. Leave the *Plan project* as the default value of *openshift-mtv*.
+. On the *Creation migration plan* page, give your plan a name like `namespace-to-namespace`. 
+
++
+Leave the *Plan project* as the default value of *openshift-mtv*.
 
 +
 image::exercise7/ui/image3-planinfo-name-project.png[title="Create migration plan", link=self, window=blank, width=100%]
@@ -533,7 +605,10 @@ Click *Next*
 +
 image::exercise7/ui/image5-select-virtual-machine.png[title="Select Virtual Machine", link=self, window=blank, width=100%]
 
-. On the *Network Map* page, select *Use new network map* and select */Default network* as the *Source network*. The *Target network* should already be set to *Default network*.
+. On the *Network Map* page, select *Use new network map* and select */Default network* as the *Source network*.
+
++
+The *Target network* should already be set to *Default network*.
 
 +
 Click *Next*
@@ -542,7 +617,10 @@ Click *Next*
 
 image::exercise7/ui/image6-new-network-map.png[title="Create Network Map", link=self, window=blank, width=100%]
 
-. On the *Storage Map* page, select *Use new storage map* and select *ocs-external-storagecluster-ceph-rbd* as the *Source storage*. The *Target storage* should already be set to *ocs-external-storagecluster-ceph-rbd*.
+. On the *Storage Map* page, select *Use new storage map* and select *ocs-external-storagecluster-ceph-rbd* as the *Source storage*.
+
++
+The *Target storage* should already be set to *ocs-external-storagecluster-ceph-rbd*.
 
 +
 Click *Next*
@@ -587,9 +665,11 @@ image::exercise7/ui/image11-review-create.png[title="Review and Create", link=se
 +
 [NOTE]
 ====
-In our case, we see *The plan is not ready* due to a *MAC address conflict*. Once this issue is resolved, the migration will complete successfull with no other changes in the workflow.
+We see *The plan is not ready* with a status of *Cannot start* due to a *MAC address conflict*.
 
-You can follow https://issues.redhat.com/browse/CNV-72966[CNV-72966 - loosen (or drop) mac collision detection] for more information.
+Once this issue is resolved, the migration will continue successfull with no changes in the workflow.
+
+You can follow https://issues.redhat.com/browse/CNV-72966[CNV-72966 - loosen (or drop) mac collision detection], targeting 4.22, for more information.
 ====
 
 +
