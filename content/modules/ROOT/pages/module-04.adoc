@@ -186,7 +186,7 @@ oc get vm node-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinit
 ----
 
 +
-. With an external force to move or restart the VM, new Affinity rules do not take effect.
+. Without an external force to move or restart the VM, new Affinity rules do not take effect.
 
 +
 To apply the changes manually, you can live migrate or restart the VM. For automatic enforcement, you can configure the *Descheduler* with the *AffinityAndTaints* profile.
@@ -394,13 +394,31 @@ VM node-affinity-vm was scheduled to restart
 ----
 
 +
-. Click the *pod-affinity-vm*  
+. Next, we are going to configure the *pod-affinity-vm*.  
 
 +
-. Click *Configure → Scheduling*.
+.. Begin by starting *pod-affinity-vm* Virtual Machine
 
 +
-. Click the *Affinity rules*.
+[.wrap,console,role=execute]
+----
+virtctl start pod-affinity-vm -n affinity
+----
+
++
+[source,console]
+----
+VM pod-affinity-vm was scheduled to start
+----
+
++
+. Once the VM has started, using the OpenShift Console, from the left side panel, navigate to *Virtualization → VirtualMachines*
+
++
+Under *All projects*, select the *affinity* namespace and click on the Virtual Machine named *pod-affinity-vm* and click on the *Configuration* tab.
+
++
+From the *Configuration* tab, select *Scheduling* and click the *blue pencil* icon under *Affinity rules* to add a new one.
 
 +
 image::exercise4/04-image-affinity04.png[title="Pod Affinity Rule", link=self, window=blank, width=100%]
@@ -412,16 +430,22 @@ image::exercise4/04-image-affinity04.png[title="Pod Affinity Rule", link=self, w
 . Change the type to *Workload (pod) Affinity*
 
 +
-. Keep the *Condition* set to *Required during scheduling*.
-
-+
-. Leave the *Topology key* at the default value.
+. Keep the *Condition* set to *Required during scheduling* and leave the *Topology key* at the default value.
 
 +
 . Click *Add expression* under *Workload labels*.
 
 +
-. You will now set a key so this VM will run on the same node as *node-affinity-vm*. Set the *Key* field to `app` and the *Values* field to `fedora` and click *add*. Your Final Pod Affinity rule will look like the picture below. Confirm this is true and click *Save affinity rule*.
+Set the *Key* field to `app` and the *Values* field to `fedora` and click *Add*.
+
++
+This is the same label applied to the *node-affinity-vm* earler.
+
++
+Your Final Pod Affinity rule will look like the picture below.
+
++
+Confirm this is true and click *Save affinity rule*.
 
 +
 image::exercise4/04-image-affinity05.png[title="Pod Affinity Rule", link=self, window=blank, width=100%]
@@ -430,7 +454,10 @@ image::exercise4/04-image-affinity05.png[title="Pod Affinity Rule", link=self, w
 . Click *Apply rules*
 
 +
-. Now let's take a look at the Pod Affinity rule on *pod-affinity-vm*. You can view this information either through the GUI by navigating to *pod-affinity-vm → YAML*, or by using the CLI.
+. Now let's take a look at the Pod Affinity rule on *pod-affinity-vm*.
+
++
+You can view this information through the GUI by inspecting the *pod-affinity-vm* *YAML*, or using the CLI.
 
 +
 [source,text,role=execute]
@@ -445,7 +472,7 @@ oc get vm pod-affinity-vm -n affinity -o jsonpath='{.spec.template.spec.affinity
 ----
 
 +
-. See where the pod-affinity-vm and node-affinity-vm are running by looking at OpenShift Console or check on the OpenShift Command line. 
+. Check where the *pod-affinity-vm* and *node-affinity-vm* are running by looking at OpenShift Console or using the OpenShift CLI. 
 
 +
 [source,text,role=execute]
@@ -456,22 +483,37 @@ oc get vmi pod-affinity-vm node-affinity-vm -n affinity
 +
 .Output
 ----
-NAME               AGE   PHASE     IP            NODENAME                 READY
-pod-affinity-vm    30m   Running   10.233.0.54   worker-cluster-t96sv-3   True
-node-affinity-vm    3m   Running   10.233.0.46   worker-cluster-t96sv-2   True
+NAME               AGE    PHASE     IP             NODENAME                        READY
+pod-affinity-vm    8m2s   Running   10.232.0.218   control-plane-cluster-dvddt-1   True
+node-affinity-vm   11m    Running   10.233.0.35    worker-cluster-dvddt-1          True
 ----
 
 +
-. To make the VM follow these new Pod Affinity rules. You normally would migrate it to the node with the label. However, to show that this Pod Affinity rule is working. We are going to power off the vm completely and then power it back on. 
+. As we noted in the last lab, without an external force to move or restart the VM, new Affinity rules do not take effect.
 
 +
-. Stop the *pod-affinity-vm* VM by clicking on *Action → Stop*.
+To apply the changes manually, you can live migrate or restart the VM. For automatic enforcement, you can configure the *Descheduler* with the *AffinityAndTaints* profile.
 
 +
-. Once the VM completely stops. Click *Actions → Start*.
+. Restart the *pod-affinity-vm* VM.
 
 +
-. See where the *pod-affinity-vm* and *node-affinity-vm* are running by looking at OpenShift Console or check on the OpenShift Command line. 
+[.wrap,console,role=execute]
+----
+virtctl restart pod-affinity-vm -n affinity
+----
+
++
+[source,console]
+----
+VM pod-affinity-vm was scheduled to restart
+----
+
++
+. Once the VM restarts, the pod affinity will be in effect. 
+
++
+You can validate this in the GUI by navigating to the *pod-affinity-vm* and *node-affinity-vm*, and looking at the *Node* name in the *General* box on the right hand side of the *VirtualMachine details* page or using the OCP CLI.
 
 +
 [source,text,role=execute]
@@ -482,13 +524,13 @@ oc get vmi pod-affinity-vm node-affinity-vm -n affinity
 +
 .Output
 ----
-NAME               AGE   PHASE     IP            NODENAME                 READY
-pod-affinity-vm     1m   Running   10.233.0.54   worker-cluster-t96sv-2   True
-node-affinity-vm    4m   Running   10.233.0.46   worker-cluster-t96sv-2   True
+NAME               AGE    PHASE     IP            NODENAME                 READY
+pod-affinity-vm    100s   Running   10.233.0.36   worker-cluster-dvddt-1   True
+node-affinity-vm   35m    Running   10.233.0.35   worker-cluster-dvddt-1   True
 ----
 
 +
-. You will now see the the *pod-affinity-vm* is now running the same location as the *node-affinity-vm* because of the pod affinity rule.
+. You will now see the the *pod-affinity-vm* is now running on the same node *node-affinity-vm* because of the pod affinity rule.
 
 
 [#podantiaffinity]
