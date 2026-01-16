@@ -38,6 +38,20 @@ include::lab-access.adoc[]
 
 . Ensure you are <<labaccess,logged in to both the OpenShift Console and CLI as the *admin* user>> from your *web browser* and the *terminal* window on the right side of your screen and continue to the next step.
 
+
+. Start the source Virtual Machine
++
+[.wrap,console,role=execute]
+----
+virtctl start vm-migration-ns-ns-live -n vm-live-migration-source
+----
+
++
+[source,console]
+----
+VM vm-migration-ns-ns-live was scheduled to start
+----
+
 +
 . Verify the source *VirtualMachineInstance* is running.
 +
@@ -91,6 +105,9 @@ EOF
 
 + 
 Confirm the *DataVolume* and associated *PersistentVolumeClaim* have been created by executing the following two commands:
+
++
+It is expected that the DV and PVC are *PendingPopulation* and *Pending* until the migration starts.
 
 + 
 [.wrap,console,role=execute]
@@ -179,7 +196,6 @@ spec:
         pod: {}
       domain:
         cpu:
-          model: EPYC
           cores: 1
           sockets: 1
           threads: 1
@@ -232,20 +248,20 @@ Confirm the *VirtualMachine* and associated *VirtualMachineInstance* have been c
 +
 [.wrap,console,role=execute]
 ----
-oc get VirtualMachine -n vm-migration-ns-ns-destination
+oc get VirtualMachine -n vm-live-migration-destination
 ----
 
 +
 [source,console]
 ----
 NAME                      AGE     STATUS               READY
-vm-migration-ns-ns-live   5m51s   WaitingForReceiver   False
+vm-migration-ns-ns-live   51s     WaitingForReceiver   False
 ----
 
 +
 [.wrap,console,role=execute]
 ----
-oc get VirtualMachineInstance -n vm-migration-ns-ns-destination
+oc get VirtualMachineInstance -n vm-live-migration-destination
 ----
 
 +
@@ -256,7 +272,10 @@ vm-migration-ns-ns-live   5m55s   WaitingForSync                    False
 ----
 
 +
-You will notice that the *VirtualMachine* and *VirtualMachineInstance* have a unique *PHASE*, *WaitingForReceiver* and *WaitingForSync*. This indicates the *VirtualMachine* is waiting for the migration to start as a receiver and the *VirtualMachineInstance* is waiting for data to be synchronized from the source *VirtualMachine*.
+You will notice that the *VirtualMachine* and *VirtualMachineInstance* have a unique *PHASE*, *WaitingForReceiver* and *WaitingForSync*. 
+
++
+This indicates the *VirtualMachine* is waiting for the migration to start as a receiver and the *VirtualMachineInstance* is waiting for data to be synchronized from the source *VirtualMachine*.
 
 +
 [start=6]
@@ -288,7 +307,7 @@ Confirm the destination *VirtualMachineInstanceMigration* has been created by ex
 + 
 [.wrap,console,role=execute]
 ----
-oc get VirtualMachineInstanceMigration -n vm-migration-ns-ns-destination
+oc get VirtualMachineInstanceMigration -n vm-live-migration-destination
 ----
 
 + 
@@ -315,6 +334,13 @@ oc get pods $(oc get leases virt-synchronization-controller -n openshift-cnv -o 
 ----
 
 +
+[IMPORTANT]
+====
+The *IP address* in your cluster *will be different*! Make sure you use the correct IP address from the output!
+====
+
++
+.Example output
 [source,console]
 ----
 10.232.1.136
@@ -380,7 +406,7 @@ vm-live-migration-destination   ns-to-ns-vm-live-migration-instance-destination 
 +
 [.wrap,console,role=execute]
 ----
-oc get vm -n vm-migration-ns-ns-source
+oc get vm -n vm-live-migration-source
 ----
 
 +
@@ -398,7 +424,7 @@ vm-migration-ns-ns-live   7m1s   Migrating   False
 . From the Console
 
 +
-From the left hand menu, navigate to *Virtualization*, click *Virtual Machines*, followed by the namespace *vm-live-migration-source* to expand it and click on the virtual machine named *vm-migration-ns-ns-live*.
+From the left side panel, navigate to *Virtualization -> Virtual Machines*. Under *All projects*, select the *vm-live-migration-source* namespace and click on the Virtual Machine named *vm-migration-ns-ns-live*.
 
 +
 On the *Virtual machine details* page, you will see the the *Source* VM is *Running*.
