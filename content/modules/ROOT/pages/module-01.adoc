@@ -109,8 +109,8 @@ The requirements for this type of migration are the same as the previous lesson.
 +
 . From the left side panel, navigate to *Virtualization -> Virtual Machines*.
 
-=
-Under *All projects*, select the *live-migrate* namespace and click on the Virtual Machine named *live-migrate-vm1*.
++
+. Under *All projects*, select the *live-migrate* namespace and click on the Virtual Machine named *live-migrate-vm1*.
 
 +
 . The Virtual Machine should already be *Running* from the last lesson. If it is not, click the blue *Play* button to *Start* the Virtual Machine and wait for it to enter the *Running* state.
